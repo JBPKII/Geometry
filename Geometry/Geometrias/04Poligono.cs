@@ -1,8 +1,20 @@
 ﻿using System;
+using System.Collections.Generic;
 
-public class Class1
+namespace Geometry.Geometrias
 {
-	public Class1()
-	{
-	}
+    /// <summary>
+    /// Polígono irregular definido por sus vértices
+    /// </summary>
+    public class Poligono
+    {
+        IList<Punto3D> Vertices;
+        /// <summary>
+        /// Inicializa un polígono sin vértices
+        /// </summary>
+        public Poligono()
+        {
+            Vertices = new List<Punto3D>();
+        }
+    }
 }
