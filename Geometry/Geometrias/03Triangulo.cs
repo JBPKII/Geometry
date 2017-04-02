@@ -10,17 +10,17 @@ namespace Geometry.Geometrias
         /// <summary>
         /// Primer vértice
         /// </summary>
-        Punto3D P1;
+        public Punto3D P1;
 
         /// <summary>
         /// Segundo vértice
         /// </summary>
-        Punto3D P2;
+        public Punto3D P2;
 
         /// <summary>
         /// Tercer vértice
         /// </summary>
-        Punto3D P3;
+        public Punto3D P3;
 
         /// <summary>
         /// Inicializa un triángulo con los vértices en el origen de coordenadas

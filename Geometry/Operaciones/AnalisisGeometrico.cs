@@ -74,8 +74,42 @@ namespace Geometry.Analisis
             return ResPeretenece;
         }
 
+        public static Triangulo OrdenarVertices(Triangulo TrianguloOriginal,bool SentidoHorario = false)
+        {
+            Triangulo ResTriangulo = TrianguloOriginal;
 
+            if(SentidoHorario)
+            {
+                if(ResTriangulo.Sentido != -1)
+                {
+                    ResTriangulo = new Triangulo(TrianguloOriginal.P2, TrianguloOriginal.P1, TrianguloOriginal.P3);
+                }
+            }
+            else
+            {
+                if (TrianguloOriginal.Sentido != 1)
+                {
+                    ResTriangulo = new Triangulo(TrianguloOriginal.P2, TrianguloOriginal.P1, TrianguloOriginal.P3);
+                }
+            }
 
+            return ResTriangulo;
+        }
+
+        public static bool PuntoCircunscrito(Triangulo Triangulo, Punto3D PTest)
+        {
+            //Triángulo en orden antihorario
+            Triangulo = OrdenarVertices(Triangulo, false);
+
+            Matrices.Matriz MatCircunscrito = new Matrices.Matriz(new double[4, 4] {
+                {Triangulo.P1.X, Triangulo.P1.Y, Math.Pow(Triangulo.P1.X, 2.0) + Math.Pow(Triangulo.P1.Y, 2.0), 1.0 },
+                {Triangulo.P2.X, Triangulo.P2.Y, Math.Pow(Triangulo.P2.X, 2.0) + Math.Pow(Triangulo.P2.Y, 2.0), 1.0 },
+                {Triangulo.P3.X, Triangulo.P3.Y, Math.Pow(Triangulo.P3.X, 2.0) + Math.Pow(Triangulo.P3.Y, 2.0), 1.0 },
+                {PTest.X, PTest.Y, Math.Pow(PTest.X, 2.0) + Math.Pow(PTest.Y, 2.0), 1.0}
+            });
+
+            return MatCircunscrito.Determinate>0;
+        }
 
 
 
