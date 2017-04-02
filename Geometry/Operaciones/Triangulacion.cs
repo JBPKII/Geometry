@@ -16,6 +16,10 @@ namespace Geometry.Analisis
         public enum TipoTriangulado
         {
             /// <summary>
+            /// Valor por defecto o que no se ha realizado ninguna triangulación
+            /// </summary>
+            Ninguna,
+            /// <summary>
             /// https://es.wikipedia.org/wiki/Triangulaci%C3%B3n_en_abanico
             /// </summary>
             Avanico,
