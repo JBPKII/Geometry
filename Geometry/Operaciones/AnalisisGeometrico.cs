@@ -96,7 +96,7 @@ namespace Geometry.Analisis
             return ResTriangulo;
         }
 
-        public static bool PuntoCircunscrito(Triangulo Triangulo, Punto3D PTest)
+        public static bool PuntoCircunscritoDelaunay(Triangulo Triangulo, Punto3D PTest)
         {
             //Triángulo en orden antihorario
             Triangulo = OrdenarVertices(Triangulo, false);
@@ -105,13 +105,29 @@ namespace Geometry.Analisis
                 {Triangulo.P1.X, Triangulo.P1.Y, Math.Pow(Triangulo.P1.X, 2.0) + Math.Pow(Triangulo.P1.Y, 2.0), 1.0 },
                 {Triangulo.P2.X, Triangulo.P2.Y, Math.Pow(Triangulo.P2.X, 2.0) + Math.Pow(Triangulo.P2.Y, 2.0), 1.0 },
                 {Triangulo.P3.X, Triangulo.P3.Y, Math.Pow(Triangulo.P3.X, 2.0) + Math.Pow(Triangulo.P3.Y, 2.0), 1.0 },
-                {PTest.X, PTest.Y, Math.Pow(PTest.X, 2.0) + Math.Pow(PTest.Y, 2.0), 1.0}
+                {PTest.X,        PTest.Y,        Math.Pow(PTest.X, 2.0) +        Math.Pow(PTest.Y,        2.0), 1.0}
             });
 
             return MatCircunscrito.Determinate>0;
         }
 
+        private static double AreaLazadaGauss(Point3dCollection P3dColl)
+        {
+            double PrimeraLazada = 0.0;
+            double SegundaLazada = 0.0;
 
+            for (int i = 0; i < P3dColl.Count - 1; i++)
+            {
+                PrimeraLazada += (P3dColl[i].X * P3dColl[i + 1].Y);
+            }
+
+            for (int i = 0; i < P3dColl.Count - 1; i++)
+            {
+                SegundaLazada += (P3dColl[i].Y * P3dColl[i + 1].X);
+            }
+
+            return Math.Abs(PrimeraLazada - SegundaLazada) / 2.0;
+        }
 
     }
 }
