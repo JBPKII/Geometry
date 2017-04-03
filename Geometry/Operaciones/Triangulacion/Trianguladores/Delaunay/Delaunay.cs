@@ -19,9 +19,9 @@ namespace Geometry.Operaciones.Triangulaciones.Trianguladores
             //Según terminan se van uniendo y resolviendo cada una de las divisiones en función de cuando terminen
 
             int currentManagedThread = Environment.CurrentManagedThreadId;
-            int processorCount = Environment.ProcessorCount;
+            Triangulaciones.Delaunay.ThreadDelaunay[] ThreadCollection = null;
 
-
+            Triangulaciones.Delaunay.Repartidor.ConfigurarThreads(ref ThreadCollection, Perimetro, LineasRuptura, Puntos);
 
             return ResTriang;
         }
