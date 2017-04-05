@@ -119,7 +119,7 @@ namespace Geometry.Operaciones.Triangulaciones.Trianguladores
             {
                 while (_EstadoProceso == Estado.EnEjecucion)
                 {
-                    System.Threading.Thread.sleep(300);
+                    //TODO: System.Threading.Thread.sleep(300);
                 }
                 return _PoolResultados[0];
             }

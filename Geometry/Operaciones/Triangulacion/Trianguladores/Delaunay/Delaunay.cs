@@ -7,7 +7,6 @@ namespace Geometry.Operaciones.Triangulaciones.Trianguladores
 {
     class Delaunay : ITriangulador
     {
-
         public IList<Triangulo> Triangular(Poligono Perimetro, IList<Linea> LineasRuptura, IList<Punto3D> Puntos)
         {
             IList<Triangulo> ResTriang = new List<Triangulo>();
@@ -28,7 +27,7 @@ namespace Geometry.Operaciones.Triangulaciones.Trianguladores
 
             while (TrianguladorMultiProceso.EstadoProceso == TriangulacionMultiProceso.Estado.EnEjecucion)
             {
-                System.Threading.Thread.Sleep(300);
+                //TODO: System.Threading.Thread.Sleep(300);
             }
 
             if(TrianguladorMultiProceso.EstadoProceso == TriangulacionMultiProceso.Estado.Terminado )
