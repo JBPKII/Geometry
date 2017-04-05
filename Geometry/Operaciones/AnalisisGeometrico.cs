@@ -111,7 +111,7 @@ namespace Geometry.Analisis
             return MatCircunscrito.Determinate>0;
         }
 
-        private static double AreaLazadaGauss(Point3dCollection P3dColl)
+        private static double AreaLazadaGauss(IList<Punto3D> P3dColl)
         {
             double PrimeraLazada = 0.0;
             double SegundaLazada = 0.0;

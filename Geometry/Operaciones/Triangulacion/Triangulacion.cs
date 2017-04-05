@@ -37,6 +37,8 @@ namespace Geometry.Operaciones.Triangulaciones
     /// </summary>
     public class Triangulacion
     {
+        IList<Triangulo> _Resultado = new List<Triangulo>();
+
         /// <summary>
         /// 
         /// </summary>
@@ -48,12 +50,22 @@ namespace Geometry.Operaciones.Triangulaciones
         /// <summary>
         /// 
         /// </summary>
+        public IList<Triangulo> Resultado
+        {
+            get
+            {
+                return _Resultado;
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
         /// <param name="PerimetroPoligono"></param>
         /// <param name="Metodo"></param>
         /// <returns></returns>
-        public static IList<Triangulo> TriangularPoligono(Poligono PerimetroPoligono, TipoTriangulado Metodo = TipoTriangulado.Delaunay)
+        public bool TriangularPoligono(Poligono PerimetroPoligono, TipoTriangulado Metodo = TipoTriangulado.Delaunay)
         {
-            IList<Triangulo> ResTriangulacion = new List<Triangulo>();
             ITriangulador Triangulador = null; ;
 
             switch (Metodo)
@@ -78,10 +90,13 @@ namespace Geometry.Operaciones.Triangulaciones
 
             if (Triangulador != null)
             {
-                ResTriangulacion = Triangulador.Triangular(PerimetroPoligono);
+                _Resultado = Triangulador.Triangular(PerimetroPoligono, new List<Linea>(), PerimetroPoligono.Vertices);
+                return true;
             }
-
-            return ResTriangulacion;
+            else
+            {
+                return false;
+            }
         }
     }
 }

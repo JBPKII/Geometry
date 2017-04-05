@@ -66,7 +66,9 @@ namespace Geometry.Geometrias
             if (_Triangulacion.Count == 0)
             {
                 //Recalcula la triangualación
-                _Triangulacion = Operaciones.Triangulaciones.Triangulacion.TriangularPoligono(this, _TipoTriangulacion);
+                Operaciones.Triangulaciones.Triangulacion Triang = new Operaciones.Triangulaciones.Triangulacion();
+                Triang.TriangularPoligono(this, _TipoTriangulacion);
+                _Triangulacion = Triang.Resultado;
             }
 
             Res = (_Triangulacion.Count > 0);
