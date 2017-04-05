@@ -79,7 +79,7 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Geometry Frame\Geometry.csproj">
+    <ProjectReference Include="..\Geometry\Geometry.csproj">
       <Project>{2b98a218-7e59-4677-8ca5-756ed1d8e5c8}</Project>
       <Name>Geometry</Name>
     </ProjectReference>
