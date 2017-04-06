@@ -11,7 +11,7 @@ namespace Geometry.Operaciones.Triangulaciones.Trianguladores
         TriangulacionMultiProceso.Estado Estado { get; }
         System.Exception Error { get; }
         void Ejecutar();
-        IList<Geometrias.Triangulo> Resultado();
+        Triangulaciones.Delaunay.ResultadoDelaunay Resultado();
 
         //eventos al terminar
         event EventHandler OnFinProceso;  
@@ -55,32 +55,63 @@ namespace Geometry.Operaciones.Triangulaciones.Trianguladores
             _PoolProcesos = new List<IProceso>();
 
             //Secciones
-            IList<Triangulo> Secciones = _CalcularSecciones(Perimetro, NumeroProcesos);
+            IList<Triangulaciones.Delaunay.SeccionDelaunay> Secciones = _CalcularSecciones(Perimetro, NumeroProcesos);
 
-            foreach (Triangulo item in Secciones)
+            foreach (Triangulaciones.Delaunay.SeccionDelaunay item in Secciones)
             {
-                _PoolProcesos.Add(new ProcesoTriangulacion(_ContenidoEnSeccion(item, Puntos),
-                                                           _ContenidoEnSeccion(item, LineasRuptura),
-                                                           item));
+                _PoolProcesos.Add(new ProcesoTriangulacion(_ContenidoEnSeccion(item.Seccion, Puntos),
+                                                           _ContenidoEnSeccion(item.Seccion, LineasRuptura),
+                                                           item.Seccion, 
+                                                           item.MallaAnteriorSiguiente.MallaAnterior, 
+                                                           item.MallaAnteriorSiguiente.MallaSiguiente));
             }
 
             _EstadoProceso = Estado.EnEspera;
         }
 
-        private IList<Triangulo> _CalcularSecciones(Poligono Perimetro, int NumeroSecciones)
+        private IList<Triangulaciones.Delaunay.SeccionDelaunay> _CalcularSecciones(Poligono Perimetro, int NumeroSecciones)
         {
-            IList<Triangulo> ResSecciones = new List<Triangulo>(NumeroSecciones);
+            IList<Triangulaciones.Delaunay.SeccionDelaunay> ResSecciones = new List<Triangulaciones.Delaunay.SeccionDelaunay>();
 
             try
             {
-                //TODO: Calcula las secciones que envuelven al polígono
+                //Calcula las secciones que envuelven al polígono
+                BBox BBoxPoligono = new BBox();
+                foreach (Punto3D P3D in Perimetro.Vertices)
+                {
+                    BBoxPoligono.Añadir(P3D);
+                }
 
+                double RadioCircinscrito = Math.Max(BBoxPoligono.Ancho, BBoxPoligono.Alto) / 2.0;
+                Punto3D PMedio = new Punto3D((BBoxPoligono.Maximo.X + BBoxPoligono.Minimo.X) / 2.0,
+                                             (BBoxPoligono.Maximo.Y + BBoxPoligono.Minimo.Y) / 2.0,
+                                             0.0);
+                Punto3D PAnterior = new Punto3D(PMedio.X + RadioCircinscrito, PMedio.Y, 0.0);
+                for (int i = 1; i <= NumeroSecciones; i++)
+                {
+                    Triangulo Seccion = new Triangulo();
+                    Seccion.P1 = PMedio;
+                    Seccion.P2 = PAnterior;
 
+                    double Alfa = double.Parse(i.ToString()) * 2.0 * Math.PI / double.Parse(NumeroSecciones.ToString());
+                    Punto3D PSiguiente = new Punto3D(PMedio.X + (RadioCircinscrito * Math.Cos(Alfa)),
+                                                     PMedio.Y + (RadioCircinscrito * Math.Sin(Alfa)),
+                                                     0.0);
+
+                    Seccion.P3 = PSiguiente;
+                    PAnterior = PSiguiente;
+
+                    Triangulaciones.Delaunay.SeccionDelaunay ResSubSec = new Triangulaciones.Delaunay.SeccionDelaunay();
+                    ResSubSec.Seccion = Seccion;
+                    ResSubSec.MallaAnteriorSiguiente.MallaAnterior = i;
+                    ResSubSec.MallaAnteriorSiguiente.MallaSiguiente = (i + 1) > NumeroSecciones ? 1 : (i + 1);//Revisar
+                    ResSecciones.Add(ResSubSec);
+                }
             }
             catch (Exception sysEx)
             {
                 sysEx.Data.Clear();
-                ResSecciones = new List<Triangulo>();
+                ResSecciones = new List<Triangulaciones.Delaunay.SeccionDelaunay>();
             }
 
             return ResSecciones;
@@ -89,13 +120,28 @@ namespace Geometry.Operaciones.Triangulaciones.Trianguladores
         private IList<Linea> _ContenidoEnSeccion(Triangulo Seccion, IList<Linea> LineasRuptura)
         {
             IList<Linea> Res = new List<Linea>();
-            //TODO: Evalua si la línea de ruptura está dentro
+            //Evalua si la línea de ruptura está dentro
+            foreach (Linea item in LineasRuptura)
+            {
+                if (Geometry.Analisis.AnalisisGeometrico.PuntoEnTriangulo(item.Inicio, Seccion) ||
+                    Geometry.Analisis.AnalisisGeometrico.PuntoEnTriangulo(item.Fin, Seccion))
+                {
+                    Res.Add(item);
+                }
+            }
             return Res;
         }
         private IList<Punto3D> _ContenidoEnSeccion(Triangulo Seccion, IList<Punto3D> Puntos)
         {
             IList<Punto3D> Res = new List<Punto3D>();
-            //TODO: Evalua si el punto está dentro
+            //Evalua si el punto está dentro
+            foreach (Punto3D item in Puntos)
+            {
+                if(Geometry.Analisis.AnalisisGeometrico.PuntoEnTriangulo(item, Seccion))
+                {
+                    Res.Add(item);
+                }
+            }
             return Res;
         }
         #endregion
@@ -117,9 +163,14 @@ namespace Geometry.Operaciones.Triangulaciones.Trianguladores
         {
             get
             {
+                if(_EstadoProceso== Estado.EnEspera)
+                {
+                    IniciarProceso();
+                }
+
                 while (_EstadoProceso == Estado.EnEjecucion)
                 {
-                    //TODO: System.Threading.Thread.sleep(300);
+                    System.Threading.Thread.Sleep(300);
                 }
                 return _PoolResultados[0];
             }

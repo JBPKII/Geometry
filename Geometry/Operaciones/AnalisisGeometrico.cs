@@ -34,6 +34,10 @@ namespace Geometry.Analisis
             return ResSentido;
         }
 
+        public static bool PuntoEnTriangulo(Punto3D PTest, Triangulo T)
+        {
+            return PuntoEnTriangulo(PTest, T.P1, T.P2, T.P3);
+        }
         public static bool PuntoEnTriangulo(Punto3D PTest, Punto3D T1, Punto3D T2, Punto3D T3)
         {
             bool ResPeretenece = false;

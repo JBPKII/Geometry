@@ -7,8 +7,29 @@ namespace Geometry.Geometrias
     /// </summary>
     public class BBox
     {
-        private Punto3D _Max;
-        private Punto3D _Min;
+        private Punto3D _Max = null;
+        private Punto3D _Min = null;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public BBox()
+        {
+            //Determinar cual es el mayor y cual el menor, por eje
+            _Max = null;
+            _Min = null;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="P"></param>
+        public BBox(Punto3D P)
+        {
+            //Determinar cual es el mayor y cual el menor, por eje
+            _Max = P;
+            _Min = P;
+        }
 
         /// <summary>
         /// 
@@ -17,8 +38,13 @@ namespace Geometry.Geometrias
         /// <param name="P2"></param>
         public BBox(Punto3D P1, Punto3D P2)
 	    {
-            //TODO: Determinar cual es el mayor y cual el menor, por eje
-
+            //Determinar cual es el mayor y cual el menor, por eje
+            _Max = new Punto3D( Math.Max(P1.X, P2.X),
+                                Math.Max(P1.Y, P2.X),
+                                Math.Max(P1.Z, P2.Z));
+            _Min = new Punto3D( Math.Min(P1.X, P2.X),
+                                Math.Min(P1.Y, P2.X),
+                                Math.Min(P1.Z, P2.Z));
         }
 
         /// <summary>
@@ -27,7 +53,21 @@ namespace Geometry.Geometrias
         /// <param name="P"></param>
         public void Añadir(Punto3D P)
         {
-            //TODO: Determinar cual es el mayor y cual el menor, por eje
+            if (_Max == null || _Min == null)
+            {
+                _Max = P;
+                _Min = P;
+            }
+            else
+            {
+                //Determinar cual es el mayor y cual el menor, por eje
+                _Max = new Punto3D(Math.Max(_Max.X, P.X),
+                                    Math.Max(_Max.Y, P.X),
+                                    Math.Max(_Max.Z, P.Z));
+                _Min = new Punto3D(Math.Min(_Min.X, P.X),
+                                    Math.Min(_Min.Y, P.X),
+                                    Math.Min(_Min.Z, P.Z));
+            }
         }
 
         /// <summary>
@@ -90,7 +130,24 @@ namespace Geometry.Geometrias
         public bool Contiene(Punto3D PTest, bool Plano = true)
         {
             bool Res = false;
-            //TODO: Evaluar si está dentro del BBox
+            //Evaluar si está dentro del BBox
+            if (PTest.X >= _Min.X && PTest.X <= _Max.X)
+            {
+                if (PTest.Y >= _Min.Y && PTest.Y <= _Max.Y)
+                {
+                    if (Plano)
+                    {
+                        Res = true;
+                    }
+                    else
+                    { 
+                        if (PTest.Z >= _Min.Z && PTest.Z <= _Max.Z)
+                        {
+                            Res = true;
+                        }
+                    }
+                }
+            }
 
             return Res;
         }

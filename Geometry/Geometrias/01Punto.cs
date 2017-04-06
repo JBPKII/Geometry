@@ -54,9 +54,9 @@ namespace Geometry.Geometrias
         public override string ToString()
         {
             return string.Format("{0}, {1}, {2}", 
-                                Math.Round(X, _precision, MidpointRounding.ToEven),
-                                Math.Round(Y, _precision, MidpointRounding.ToEven),
-                                Math.Round(Z, _precision, MidpointRounding.ToEven));
+                                Math.Round(X, _precision, MidpointRounding.ToEven).ToString(),
+                                Math.Round(Y, _precision, MidpointRounding.ToEven).ToString(),
+                                Math.Round(Z, _precision, MidpointRounding.ToEven).ToString());
         }
     }
 }

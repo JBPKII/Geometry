@@ -5,12 +5,14 @@ using Geometry.Geometrias;
 
 namespace Geometry.Operaciones.Triangulaciones.Trianguladores
 {
+    /// <summary>
+    ///https://es.wikipedia.org/wiki/Triangulaci%C3%B3n_de_Delaunay
+    /// </summary>
     class Delaunay : ITriangulador
     {
         public IList<Triangulo> Triangular(Poligono Perimetro, IList<Linea> LineasRuptura, IList<Punto3D> Puntos)
         {
             IList<Triangulo> ResTriang = new List<Triangulo>();
-            //TODO: https://es.wikipedia.org/wiki/Triangulaci%C3%B3n_de_Delaunay
 
             //Condición de Delaunay
             //Analisis.AnalisisGeometrico.PuntoCircunscrito(Triangulo,Ptest) 
@@ -27,7 +29,7 @@ namespace Geometry.Operaciones.Triangulaciones.Trianguladores
 
             while (TrianguladorMultiProceso.EstadoProceso == TriangulacionMultiProceso.Estado.EnEjecucion)
             {
-                //TODO: System.Threading.Thread.Sleep(300);
+                System.Threading.Thread.Sleep(300);
             }
 
             if(TrianguladorMultiProceso.EstadoProceso == TriangulacionMultiProceso.Estado.Terminado )

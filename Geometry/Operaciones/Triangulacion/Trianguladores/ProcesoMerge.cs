@@ -10,10 +10,10 @@ namespace Geometry.Operaciones.Triangulaciones.Trianguladores
         private TriangulacionMultiProceso.Estado _Estado = TriangulacionMultiProceso.Estado.Vacio;
         private System.Exception _Error = new Exception("NoError");
 
-        private IList<Triangulo> _Triangulacion1;
-        private IList<Triangulo> _Triangulacion2;
+        private IList<Triangulo> _Triangulacion1 = new List<Triangulo>();
+        private IList<Triangulo> _Triangulacion2 = new List<Triangulo>();
 
-        private IList<Triangulo> _ResTriangulacion;
+        private Triangulaciones.Delaunay.ResultadoDelaunay _ResTriangulacion = new Triangulaciones.Delaunay.ResultadoDelaunay();
 
         public TriangulacionMultiProceso.Estado Estado
         {
@@ -30,10 +30,34 @@ namespace Geometry.Operaciones.Triangulaciones.Trianguladores
             }
         }
 
-        public ProcesoMerge (IList<Triangulo> Triang1, IList<Triangulo> Triang2)
-        {
-            _Triangulacion1 = Triang1;
-            _Triangulacion2 = Triang2;
+        public ProcesoMerge (Triangulaciones.Delaunay.ResultadoDelaunay Triang1, Triangulaciones.Delaunay.ResultadoDelaunay Triang2)
+        { 
+            _Triangulacion1 = Triang1.Resultado;
+            _Triangulacion2 = Triang2.Resultado;
+
+            if (Triang1.Seccion.MallaAnteriorSiguiente.MallaAnterior == Triang2.Seccion.MallaAnteriorSiguiente.MallaSiguiente)
+            {
+                // 1,2 - 0,1
+                _ResTriangulacion.Seccion.MallaAnteriorSiguiente.MallaAnterior = 
+                    Triang1.Seccion.MallaAnteriorSiguiente.MallaSiguiente;
+                _ResTriangulacion.Seccion.MallaAnteriorSiguiente.MallaSiguiente =
+                    Triang2.Seccion.MallaAnteriorSiguiente.MallaAnterior;
+            }
+            else
+            {
+                if (Triang1.Seccion.MallaAnteriorSiguiente.MallaSiguiente == Triang2.Seccion.MallaAnteriorSiguiente.MallaAnterior)
+                {
+                    // 0,1 - 1,2
+                    _ResTriangulacion.Seccion.MallaAnteriorSiguiente.MallaAnterior =
+                        Triang1.Seccion.MallaAnteriorSiguiente.MallaAnterior;
+                    _ResTriangulacion.Seccion.MallaAnteriorSiguiente.MallaSiguiente =
+                        Triang2.Seccion.MallaAnteriorSiguiente.MallaSiguiente;
+                }
+                else
+                {
+                    //No son consecutivas
+                }
+            }
 
             _Estado = TriangulacionMultiProceso.Estado.EnEspera;
         }
@@ -45,7 +69,7 @@ namespace Geometry.Operaciones.Triangulaciones.Trianguladores
             {
                 //TODO: Ejecutar Merge
 
-                //TODO: Lanzar evento
+                
 
                 _Estado = TriangulacionMultiProceso.Estado.Terminado;
 
@@ -57,11 +81,12 @@ namespace Geometry.Operaciones.Triangulaciones.Trianguladores
             }
             finally
             {
+                //Lanza evento
                 FinProcesoEvent?.Invoke(this, new EventArgs());
             }
         }
 
-        public IList<Triangulo> Resultado()
+        public Triangulaciones.Delaunay.ResultadoDelaunay Resultado()
         {
             return _ResTriangulacion;
         }
