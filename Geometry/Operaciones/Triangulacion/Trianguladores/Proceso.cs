@@ -89,10 +89,11 @@ namespace Geometry.Operaciones.Triangulaciones.Trianguladores
                 Punto3D PAnterior = new Punto3D(PMedio.X + RadioCircinscrito, PMedio.Y, 0.0);
                 for (int i = 1; i <= NumeroSecciones; i++)
                 {
-                    Triangulo Seccion = new Triangulo();
-                    Seccion.P1 = PMedio;
-                    Seccion.P2 = PAnterior;
-
+                    Triangulo Seccion = new Triangulo()
+                    {
+                        P1 = PMedio,
+                        P2 = PAnterior
+                    };
                     double Alfa = double.Parse(i.ToString()) * 2.0 * Math.PI / double.Parse(NumeroSecciones.ToString());
                     Punto3D PSiguiente = new Punto3D(PMedio.X + (RadioCircinscrito * Math.Cos(Alfa)),
                                                      PMedio.Y + (RadioCircinscrito * Math.Sin(Alfa)),
@@ -101,8 +102,10 @@ namespace Geometry.Operaciones.Triangulaciones.Trianguladores
                     Seccion.P3 = PSiguiente;
                     PAnterior = PSiguiente;
 
-                    Triangulaciones.Delaunay.SeccionDelaunay ResSubSec = new Triangulaciones.Delaunay.SeccionDelaunay();
-                    ResSubSec.Seccion = Seccion;
+                    Triangulaciones.Delaunay.SeccionDelaunay ResSubSec = new Triangulaciones.Delaunay.SeccionDelaunay()
+                    {
+                        Seccion = Seccion
+                    };
                     ResSubSec.MallaAnteriorSiguiente.MallaAnterior = i;
                     ResSubSec.MallaAnteriorSiguiente.MallaSiguiente = (i + 1) > NumeroSecciones ? 1 : (i + 1);//Revisar
                     ResSecciones.Add(ResSubSec);

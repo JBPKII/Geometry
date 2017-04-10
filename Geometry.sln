@@ -7,8 +7,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Testing", "Testing\Testing.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Geometry", "Geometry\Geometry.csproj", "{2B98A218-7E59-4677-8CA5-756ED1D8E5C8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTestProject", "UnitTestProject\UnitTestProject.csproj", "{1CF1B56D-6EDD-4B22-A293-A12BFEE10CB5}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -23,10 +21,6 @@ Global
 		{2B98A218-7E59-4677-8CA5-756ED1D8E5C8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2B98A218-7E59-4677-8CA5-756ED1D8E5C8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2B98A218-7E59-4677-8CA5-756ED1D8E5C8}.Release|Any CPU.Build.0 = Release|Any CPU
-		{1CF1B56D-6EDD-4B22-A293-A12BFEE10CB5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{1CF1B56D-6EDD-4B22-A293-A12BFEE10CB5}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{1CF1B56D-6EDD-4B22-A293-A12BFEE10CB5}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{1CF1B56D-6EDD-4B22-A293-A12BFEE10CB5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

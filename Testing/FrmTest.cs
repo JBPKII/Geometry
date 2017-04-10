@@ -26,10 +26,12 @@ namespace Testing
             InitializeComponent();
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void Button1_Click(object sender, EventArgs e)
         {
-            Poligono Pol = new Poligono();
-            Pol.Vertices = new List<Punto3D>();
+            Poligono Pol = new Poligono()
+            {
+                Vertices = new List<Punto3D>()
+            };
             Pol.Vertices.Add(new Punto3D(13.9617, 0.8461, 0.0));
             Pol.Vertices.Add(new Punto3D(7.4365, 7.9198, 0.0));
             Pol.Vertices.Add(new Punto3D(10.3867, 11.7687, 0.0));
