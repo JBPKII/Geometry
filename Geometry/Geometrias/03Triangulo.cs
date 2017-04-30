@@ -2,6 +2,7 @@
 
 namespace Geometry.Geometrias
 {
+    [Serializable]
     /// <summary>
     /// Triángulo definido por los tres vértices
     /// </summary>

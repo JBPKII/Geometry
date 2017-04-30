@@ -2,6 +2,7 @@
 
 namespace Geometry.Geometrias
 {
+    [Serializable]
     ///<Summary>
     /// Linea definida por punto inicial y final
     ///</Summary>

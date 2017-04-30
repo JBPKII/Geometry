@@ -3,6 +3,7 @@ using System.Collections.Generic;
 
 namespace Geometry.Geometrias
 {
+    [Serializable]
     /// <summary>
     /// Polígono irregular definido por sus vértices
     /// </summary>
@@ -11,9 +12,9 @@ namespace Geometry.Geometrias
         /// <summary>
         /// Colección con los vértices que definen el contorno del polígono
         /// </summary>
-        public IList<Punto3D> Vertices;
+        public List<Punto3D> Vertices;
 
-        IList<Triangulo> _Triangulacion = new List<Triangulo>();
+        private IList<Triangulo> _Triangulacion = new List<Triangulo>();
         Operaciones.Triangulaciones.TipoTriangulado _TipoTriangulacion = Operaciones.Triangulaciones.TipoTriangulado.Ninguna;
 
         /// <summary>
