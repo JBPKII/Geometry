@@ -5,7 +5,7 @@ using Geometry.Geometrias;
 
 namespace Geometry.Operaciones.Triangulaciones.Trianguladores
 {
-    class ProcesoMerge : IProceso
+    class SubProcesoMerge : ISubProceso
     {
         private TriangulacionMultiProceso.Estado _Estado = TriangulacionMultiProceso.Estado.Vacio;
         private System.Exception _Error = new Exception("NoError");
@@ -13,7 +13,7 @@ namespace Geometry.Operaciones.Triangulaciones.Trianguladores
         private IList<Triangulo> _Triangulacion1 = new List<Triangulo>();
         private IList<Triangulo> _Triangulacion2 = new List<Triangulo>();
 
-        private Triangulaciones.Delaunay.ResultadoDelaunay _ResTriangulacion = new Triangulaciones.Delaunay.ResultadoDelaunay();
+        private IResultadoTriangulacion _ResTriangulacion = new Triangulaciones.Delaunay.ResultadoDelaunay();
 
         public TriangulacionMultiProceso.Estado Estado
         {
@@ -30,7 +30,20 @@ namespace Geometry.Operaciones.Triangulaciones.Trianguladores
             }
         }
 
-        public ProcesoMerge (Triangulaciones.Delaunay.ResultadoDelaunay Triang1, Triangulaciones.Delaunay.ResultadoDelaunay Triang2)
+        private System.Threading.Thread _OnThread;
+        public System.Threading.Thread OnThread
+        {
+            get
+            {
+                return _OnThread;
+            }
+            set
+            {
+                _OnThread = value;
+            }
+        }
+
+        public SubProcesoMerge (IResultadoTriangulacion Triang1, IResultadoTriangulacion Triang2)
         { 
             _Triangulacion1 = Triang1.Resultado;
             _Triangulacion2 = Triang2.Resultado;
@@ -67,12 +80,19 @@ namespace Geometry.Operaciones.Triangulaciones.Trianguladores
             //Ejecuta el merge de las dos triangulaciones
             try
             {
+                _Estado = TriangulacionMultiProceso.Estado.EnEjecucion;
+
                 //TODO: Ejecutar Merge
 
-                
+
 
                 _Estado = TriangulacionMultiProceso.Estado.Terminado;
-
+            }
+            catch(System.Threading.ThreadAbortException)
+            {
+                _Error = new Exception("Subproceso de triangulación abortado.");
+                _Estado = TriangulacionMultiProceso.Estado.Detenido;
+                System.Threading.Thread.ResetAbort();
             }
             catch (Exception sysEx)
             {
@@ -82,32 +102,24 @@ namespace Geometry.Operaciones.Triangulaciones.Trianguladores
             finally
             {
                 //Lanza evento
-                FinProcesoEvent?.Invoke(this, new EventArgs());
+                Filanlizado?.Invoke(this, new EventArgs());
             }
         }
 
-        public Triangulaciones.Delaunay.ResultadoDelaunay Resultado()
+        public IResultadoTriangulacion Resultado
         {
-            return _ResTriangulacion;
+            get
+            {
+                return _ResTriangulacion;
+            }
         }
 
-        public EventHandler FinProcesoEvent;
-        public event EventHandler OnFinProceso
+        //Event handler que se dispara al terminar un proceso
+        public event EventHandler Filanlizado;
+
+        public virtual void AlFinalizar(EventArgs e)
         {
-            add
-            {
-                lock (this)
-                {
-                    FinProcesoEvent += value;
-                }
-            }
-            remove
-            {
-                lock (this)
-                {
-                    FinProcesoEvent -= value;
-                }
-            }
+            Filanlizado?.Invoke(this, e);
         }
     }
 }

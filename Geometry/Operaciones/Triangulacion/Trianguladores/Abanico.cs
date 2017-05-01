@@ -10,7 +10,7 @@ namespace Geometry.Operaciones.Triangulaciones.Trianguladores
     /// </summary>
     class Abanico : ITriangulador
     {
-        public IList<Triangulo> Triangular(Poligono Perimetro, IList<Linea> LineasRuptura, IList<Punto3D> Puntos)
+        public IList<Triangulo> Triangular(Poligono Perimetro, List<Linea> LineasRuptura, List<Punto3D> Puntos)
         {
             IList<Triangulo> ResTriang = new List<Triangulo>();
 

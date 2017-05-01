@@ -15,10 +15,32 @@ namespace Geometry.Operaciones.Triangulaciones.Delaunay
         public Triangulo Seccion = new Triangulo();
         public IndicesSeccionDelaunay MallaAnteriorSiguiente = new IndicesSeccionDelaunay();
     }
-    public class ResultadoDelaunay
+    public class ResultadoDelaunay : Trianguladores.IResultadoTriangulacion
     {
-        public IList<Triangulo> Resultado = new List<Triangulo>();
-        public SeccionDelaunay Seccion = new SeccionDelaunay();
+        private IList<Triangulo> _Resultado = new List<Triangulo>();
+        public IList<Triangulo> Resultado
+        {
+            private set
+            {
+                _Resultado = value;
+            }
+            get
+            {
+                return _Resultado;
+            }
+        }
+        private Trianguladores.SeccionTriangulacion _Seccion = new Trianguladores.SeccionTriangulacion();
+        public Trianguladores.SeccionTriangulacion Seccion
+        {
+            private set
+            {
+                _Seccion = value;
+            }
+            get
+            {
+                return _Seccion;
+            }
+        }
     }
 
     public class EstructuraDelaunay

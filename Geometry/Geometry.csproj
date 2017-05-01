@@ -55,9 +55,9 @@
     <Compile Include="Operaciones\Triangulacion\Trianguladores\Delaunay\EstructuraDelaunay.cs" />
     <Compile Include="Operaciones\Triangulacion\Trianguladores\Delaunay\MergeDelaunay.cs" />
     <Compile Include="Operaciones\Triangulacion\Trianguladores\MinimoPeso.cs" />
-    <Compile Include="Operaciones\Triangulacion\Trianguladores\Proceso.cs" />
-    <Compile Include="Operaciones\Triangulacion\Trianguladores\ProcesoMerge.cs" />
-    <Compile Include="Operaciones\Triangulacion\Trianguladores\ProcesoTriangulacion.cs" />
+    <Compile Include="Operaciones\Triangulacion\Trianguladores\TriangulacionMultiProceso.cs" />
+    <Compile Include="Operaciones\Triangulacion\Trianguladores\SubProcesoMerge.cs" />
+    <Compile Include="Operaciones\Triangulacion\Trianguladores\SubProcesoTriangulacion.cs" />
     <Compile Include="Operaciones\Triangulacion\Trianguladores\Voraz.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

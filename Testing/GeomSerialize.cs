@@ -14,7 +14,7 @@ namespace Testing
     {
         public static void SerializaPuntos3D(string rutaXml, List<Punto3D> lstPuntos3D)
         {
-            XmlSerializer xmlSerializer = new System.Xml.Serialization.XmlSerializer(typeof(List<Punto3D>), "Geometry");
+            XmlSerializer xmlSerializer = new System.Xml.Serialization.XmlSerializer(lstPuntos3D.GetType(), "Geometry");
             using (TextWriter xmlWriter = new StreamWriter(rutaXml))
             {
                 xmlSerializer.Serialize(xmlWriter, lstPuntos3D);

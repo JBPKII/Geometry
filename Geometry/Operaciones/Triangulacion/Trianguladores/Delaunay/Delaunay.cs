@@ -10,7 +10,7 @@ namespace Geometry.Operaciones.Triangulaciones.Trianguladores
     /// </summary>
     class Delaunay : ITriangulador
     {
-        public IList<Triangulo> Triangular(Poligono Perimetro, IList<Linea> LineasRuptura, IList<Punto3D> Puntos)
+        public IList<Triangulo> Triangular(Poligono Perimetro, List<Linea> LineasRuptura, List<Punto3D> Puntos)
         {
             IList<Triangulo> ResTriang = new List<Triangulo>();
 
@@ -24,7 +24,7 @@ namespace Geometry.Operaciones.Triangulaciones.Trianguladores
             int processorCount = Environment.ProcessorCount;
 
             TriangulacionMultiProceso TrianguladorMultiProceso = new TriangulacionMultiProceso(processorCount);
-            TrianguladorMultiProceso.Repartir(Perimetro, LineasRuptura, Puntos, processorCount * 2);
+            
             TrianguladorMultiProceso.IniciarProceso();
 
             while (TrianguladorMultiProceso.EstadoProceso == TriangulacionMultiProceso.Estado.EnEjecucion)
@@ -34,7 +34,7 @@ namespace Geometry.Operaciones.Triangulaciones.Trianguladores
 
             if(TrianguladorMultiProceso.EstadoProceso == TriangulacionMultiProceso.Estado.Terminado )
             {
-                ResTriang = TrianguladorMultiProceso.Resultado;
+                ResTriang = TrianguladorMultiProceso.Resultado.Resultado;
             }
             else
             {

@@ -7,6 +7,6 @@ namespace Geometry.Operaciones.Triangulaciones
 {
     interface ITriangulador
     {
-        IList<Triangulo> Triangular(Poligono Perimetro, IList<Linea> LineasRuptura, IList<Punto3D> Puntos);
+        IList<Triangulo> Triangular(Poligono Perimetro, List<Linea> LineasRuptura, List<Punto3D> Puntos);
     } 
 }

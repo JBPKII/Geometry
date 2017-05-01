@@ -37,7 +37,7 @@ namespace Geometry.Operaciones.Triangulaciones
     /// </summary>
     public class Triangulacion
     {
-        IList<Triangulo> _Resultado = new List<Triangulo>();
+        private IList<Triangulo> _Resultado = new List<Triangulo>();
 
         /// <summary>
         /// 
@@ -58,6 +58,29 @@ namespace Geometry.Operaciones.Triangulaciones
             }
         }
 
+        private ITriangulador GetNewTriangulador(TipoTriangulado Metodo)
+        {
+            switch (Metodo)
+            {
+                case TipoTriangulado.Abanico:
+                    return new Trianguladores.Abanico();
+                    //break;
+                case TipoTriangulado.Delaunay:
+                    return new Trianguladores.Delaunay();
+                    //break;
+                case TipoTriangulado.MinimoPeso:
+                    return new Trianguladores.Abanico();
+                    //break;
+                case TipoTriangulado.Voraz:
+                    return new Trianguladores.Abanico();
+                    //break;
+                case TipoTriangulado.Ninguna:
+                default:
+                    return null;
+                    //break;
+            }
+        }
+
         /// <summary>
         /// 
         /// </summary>
@@ -66,31 +89,32 @@ namespace Geometry.Operaciones.Triangulaciones
         /// <returns></returns>
         public bool TriangularPoligono(Poligono PerimetroPoligono, TipoTriangulado Metodo = TipoTriangulado.Delaunay)
         {
-            ITriangulador Triangulador = null; ;
-
-            switch (Metodo)
-            {
-                case TipoTriangulado.Abanico:
-                    Triangulador = new Trianguladores.Abanico();
-                    break;
-                case TipoTriangulado.Delaunay:
-                    Triangulador = new Trianguladores.Delaunay();
-                    break;
-                case TipoTriangulado.MinimoPeso:
-                    Triangulador = new Trianguladores.Abanico();
-                    break;
-                case TipoTriangulado.Voraz:
-                    Triangulador = new Trianguladores.Abanico();
-                    break;
-                case TipoTriangulado.Ninguna:
-                default:
-                    Triangulador = null;
-                    break;
-            }
+            ITriangulador Triangulador = GetNewTriangulador(Metodo);
 
             if (Triangulador != null)
             {
                 _Resultado = Triangulador.Triangular(PerimetroPoligono, new List<Linea>(), PerimetroPoligono.Vertices);
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="PerimetroExclusion"></param>
+        /// <param name="Metodo"></param>
+        /// <returns></returns>
+        public bool TriangularMalla(Poligono PerimetroExclusion, List<Linea> LineasRuptura, List<Punto3D> Puntos, TipoTriangulado Metodo = TipoTriangulado.Delaunay)
+        {
+            ITriangulador Triangulador = GetNewTriangulador(Metodo);
+
+            if (Triangulador != null)
+            {
+                _Resultado = Triangulador.Triangular(PerimetroExclusion, new List<Linea>(), Puntos);
                 return true;
             }
             else
