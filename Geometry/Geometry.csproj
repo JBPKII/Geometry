@@ -46,6 +46,7 @@
     <Compile Include="Geometrias\03Triangulo.cs" />
     <Compile Include="Geometrias\04Poligono.cs" />
     <Compile Include="Geometrias\05BoundingBox.cs" />
+    <Compile Include="Log\Log.cs" />
     <Compile Include="Matrices\Matriz.cs" />
     <Compile Include="Operaciones\AnalisisGeometrico.cs" />
     <Compile Include="Operaciones\Triangulacion\ITriangulador.cs" />

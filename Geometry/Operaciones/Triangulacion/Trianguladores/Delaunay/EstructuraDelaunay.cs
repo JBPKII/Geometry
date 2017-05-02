@@ -15,7 +15,7 @@ namespace Geometry.Operaciones.Triangulaciones.Delaunay
         public Triangulo Seccion = new Triangulo();
         public IndicesSeccionDelaunay MallaAnteriorSiguiente = new IndicesSeccionDelaunay();
     }
-    public class ResultadoDelaunay : Trianguladores.IResultadoTriangulacion
+    public class ResultadoDelaunay : IResultadoTriangulacion
     {
         private IList<Triangulo> _Resultado = new List<Triangulo>();
         public IList<Triangulo> Resultado
@@ -29,8 +29,8 @@ namespace Geometry.Operaciones.Triangulaciones.Delaunay
                 return _Resultado;
             }
         }
-        private Trianguladores.SeccionTriangulacion _Seccion = new Trianguladores.SeccionTriangulacion();
-        public Trianguladores.SeccionTriangulacion Seccion
+        private Triangulaciones.SeccionTriangulacion _Seccion = new Triangulaciones.SeccionTriangulacion();
+        public Triangulaciones.SeccionTriangulacion Seccion
         {
             private set
             {

@@ -32,6 +32,50 @@ namespace Geometry.Operaciones.Triangulaciones
         Voraz
     }
 
+    interface IResultadoTriangulacion
+    {
+        IList<Triangulo> Resultado { get; }
+        SeccionTriangulacion Seccion { get; }
+    }
+
+    public class IndicesSeccionTriangulacion
+    {
+        public int MallaAnterior = -1;
+        public int MallaSiguiente = -1;
+
+        public bool EsConsecutiva (IndicesSeccionTriangulacion SeccionTest)
+        {
+            bool Res = false;
+
+            if(MallaAnterior != -1 && MallaSiguiente != -1 &&
+                SeccionTest.MallaAnterior != -1 && SeccionTest.MallaSiguiente != -1)
+            {
+                if (this.MallaAnterior == SeccionTest.MallaSiguiente)
+                {
+                    // 1,2 - 0,1
+                    Res = true;
+                }
+                else if (this.MallaSiguiente == SeccionTest.MallaAnterior)
+                {
+                    // 0,1 - 1,2
+                    Res = true;
+                }
+                //else
+                //{
+                //    //no consecutivas
+                //    Res = false;
+                //}
+            }
+
+            return Res;
+        }
+    }
+    public class SeccionTriangulacion
+    {
+        public Triangulo TrianguloSeccion = new Triangulo();
+        public IndicesSeccionTriangulacion MallaAnteriorSiguiente = new IndicesSeccionTriangulacion();
+    }
+
     /// <summary>
     /// 
     /// </summary>
@@ -114,7 +158,7 @@ namespace Geometry.Operaciones.Triangulaciones
 
             if (Triangulador != null)
             {
-                _Resultado = Triangulador.Triangular(PerimetroExclusion, new List<Linea>(), Puntos);
+                _Resultado = Triangulador.Triangular(PerimetroExclusion, LineasRuptura, Puntos);
                 return true;
             }
             else

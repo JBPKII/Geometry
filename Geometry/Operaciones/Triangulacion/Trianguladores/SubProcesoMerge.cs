@@ -7,28 +7,9 @@ namespace Geometry.Operaciones.Triangulaciones.Trianguladores
 {
     class SubProcesoMerge : ISubProceso
     {
-        private TriangulacionMultiProceso.Estado _Estado = TriangulacionMultiProceso.Estado.Vacio;
-        private System.Exception _Error = new Exception("NoError");
-
-        private IList<Triangulo> _Triangulacion1 = new List<Triangulo>();
-        private IList<Triangulo> _Triangulacion2 = new List<Triangulo>();
-
-        private IResultadoTriangulacion _ResTriangulacion = new Triangulaciones.Delaunay.ResultadoDelaunay();
-
-        public TriangulacionMultiProceso.Estado Estado
-        {
-            get
-            {
-                return _Estado;
-            }
-        }
-        public System.Exception Error
-        {
-            get
-            {
-                return _Error;
-            }
-        }
+        private TipoTriangulado _tipoTriangulado = TipoTriangulado.Delaunay;
+        private IList<Triangulo> _triangulacion1 = new List<Triangulo>();
+        private IList<Triangulo> _triangulacion2 = new List<Triangulo>();
 
         private System.Threading.Thread _OnThread;
         public System.Threading.Thread OnThread
@@ -43,10 +24,42 @@ namespace Geometry.Operaciones.Triangulaciones.Trianguladores
             }
         }
 
+        private IResultadoTriangulacion _ResTriangulacion = new Triangulaciones.Delaunay.ResultadoDelaunay();
+
+        private TriangulacionMultiProceso.Estado _Estado = TriangulacionMultiProceso.Estado.Vacio;
+        public TriangulacionMultiProceso.Estado Estado
+        {
+            get
+            {
+                return _Estado;
+            }
+        }
+
+        private System.Exception _Error = new Exception("NoError");
+        public System.Exception Error
+        {
+            get
+            {
+                return _Error;
+            }
+        }
+
+
+        private Log.ProcessLog _logProceso = new Log.ProcessLog("Merge", Log.TypeProceso.Triangulacion);
+        public Log.ProcessLog LogProceso
+        {
+            get
+            {
+                return _logProceso;
+            }
+        }
+
         public SubProcesoMerge (IResultadoTriangulacion Triang1, IResultadoTriangulacion Triang2)
-        { 
-            _Triangulacion1 = Triang1.Resultado;
-            _Triangulacion2 = Triang2.Resultado;
+        {
+            _logProceso.Add(new Log.EventoLog(Log.TypeEvento.Inicio, "Inicialización el Proceso."));
+
+            _triangulacion1 = Triang1.Resultado;
+            _triangulacion2 = Triang2.Resultado;
 
             if (Triang1.Seccion.MallaAnteriorSiguiente.MallaAnterior == Triang2.Seccion.MallaAnteriorSiguiente.MallaSiguiente)
             {
@@ -72,6 +85,8 @@ namespace Geometry.Operaciones.Triangulaciones.Trianguladores
                 }
             }
 
+            _logProceso.Add(new Log.EventoLog(Log.TypeEvento.Fin, "Inicialización el Proceso."));
+
             _Estado = TriangulacionMultiProceso.Estado.EnEspera;
         }
 
@@ -82,6 +97,10 @@ namespace Geometry.Operaciones.Triangulaciones.Trianguladores
             {
                 _Estado = TriangulacionMultiProceso.Estado.EnEjecucion;
 
+                _logProceso.ActualizaProcessLog(OnThread);
+
+                _logProceso.Add(new Log.EventoLog(Log.TypeEvento.Inicio, "Procesa el Merge."));
+
                 //TODO: Ejecutar Merge
 
 
@@ -90,17 +109,20 @@ namespace Geometry.Operaciones.Triangulaciones.Trianguladores
             }
             catch(System.Threading.ThreadAbortException)
             {
-                _Error = new Exception("Subproceso de triangulación abortado.");
+                _logProceso.Add(new Log.EventoLog(Log.TypeEvento.Informacion, "Proceso abortado."));
+                _Error = new Exception("Subproceso de merge abortado.");
                 _Estado = TriangulacionMultiProceso.Estado.Detenido;
                 System.Threading.Thread.ResetAbort();
             }
             catch (Exception sysEx)
             {
+                _logProceso.Add(new Log.EventoLog(Log.TypeEvento.Error, sysEx.ToString()));
                 _Error = sysEx;
                 _Estado = TriangulacionMultiProceso.Estado.ConErrores;
             }
             finally
             {
+                _logProceso.Add(new Log.EventoLog(Log.TypeEvento.Fin, "Procesa el Merge."));
                 //Lanza evento
                 Filanlizado?.Invoke(this, new EventArgs());
             }
