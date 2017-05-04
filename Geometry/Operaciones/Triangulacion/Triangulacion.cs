@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 using Geometry.Geometrias;
 
-namespace Geometry.Operaciones.Triangulaciones
+namespace Geometry.Operaciones.Triangulacion
 {
     /// <summary>
     /// 
@@ -102,29 +102,6 @@ namespace Geometry.Operaciones.Triangulaciones
             }
         }
 
-        private ITriangulador GetNewTriangulador(TipoTriangulado Metodo)
-        {
-            switch (Metodo)
-            {
-                case TipoTriangulado.Abanico:
-                    return new Trianguladores.Abanico();
-                    //break;
-                case TipoTriangulado.Delaunay:
-                    return new Trianguladores.Delaunay();
-                    //break;
-                case TipoTriangulado.MinimoPeso:
-                    return new Trianguladores.Abanico();
-                    //break;
-                case TipoTriangulado.Voraz:
-                    return new Trianguladores.Abanico();
-                    //break;
-                case TipoTriangulado.Ninguna:
-                default:
-                    return null;
-                    //break;
-            }
-        }
-
         /// <summary>
         /// 
         /// </summary>
@@ -133,7 +110,7 @@ namespace Geometry.Operaciones.Triangulaciones
         /// <returns></returns>
         public bool TriangularPoligono(Poligono PerimetroPoligono, TipoTriangulado Metodo = TipoTriangulado.Delaunay)
         {
-            ITriangulador Triangulador = GetNewTriangulador(Metodo);
+            ITriangulador Triangulador = new Trianguladores.Delaunay.Delaunay();
 
             if (Triangulador != null)
             {
@@ -154,16 +131,78 @@ namespace Geometry.Operaciones.Triangulaciones
         /// <returns></returns>
         public bool TriangularMalla(Poligono PerimetroExclusion, List<Linea> LineasRuptura, List<Punto3D> Puntos, TipoTriangulado Metodo = TipoTriangulado.Delaunay)
         {
-            ITriangulador Triangulador = GetNewTriangulador(Metodo);
+            IList<Triangulo> ResTriang = new List<Triangulo>();
 
-            if (Triangulador != null)
+            int currentManagedThread = Environment.CurrentManagedThreadId;
+            int processorCount = Environment.ProcessorCount;
+
+            TriangulacionMultiProceso TrianguladorMultiProceso = new TriangulacionMultiProceso(processorCount)
             {
-                _Resultado = Triangulador.Triangular(PerimetroExclusion, LineasRuptura, Puntos);
+                TipoTriangulado = Metodo
+            };
+            TrianguladorMultiProceso.IniciarProceso();
+
+            while (TrianguladorMultiProceso.EstadoProceso == TriangulacionMultiProceso.Estado.EnEjecucion)
+            {
+                System.Threading.Thread.Sleep(300);
+            }
+
+            if (TrianguladorMultiProceso.EstadoProceso == TriangulacionMultiProceso.Estado.Terminado)
+            {
+                _Resultado = TrianguladorMultiProceso.Resultado.Resultado;
                 return true;
             }
             else
             {
+                //TODO: Informar de cada uno de los errores que an detenido cada uno de los procesos
+                //TrianguladorMultiProceso.LogMultiProceso
                 return false;
+            }
+        }
+
+        public static ITriangulador GetNewTriangulador(TipoTriangulado Metodo)
+        {
+            switch (Metodo)
+            {
+                case TipoTriangulado.Abanico:
+                    return new Trianguladores.Abanico.Abanico();
+                //break;
+                case TipoTriangulado.Delaunay:
+                    return new Trianguladores.Delaunay.Delaunay();
+                //break;
+                case TipoTriangulado.MinimoPeso:
+                    return new Trianguladores.MinimoPeso.MinimoPeso();
+                //break;
+                case TipoTriangulado.Voraz:
+                    return new Trianguladores.Voraz.Voraz();
+                //break;
+                case TipoTriangulado.Ninguna:
+                default:
+                    return null;
+                    //break;
+            }
+        }
+
+        public static ITriangulador GetNewMerge(TipoTriangulado Metodo)
+        {
+            switch (Metodo)
+            {
+                case TipoTriangulado.Abanico:
+                    return new Trianguladores.Abanico.Abanico();
+                //break;
+                case TipoTriangulado.Delaunay:
+                    return new Trianguladores.Delaunay.Delaunay();
+                //break;
+                case TipoTriangulado.MinimoPeso:
+                    return new Trianguladores.MinimoPeso.MinimoPeso();
+                //break;
+                case TipoTriangulado.Voraz:
+                    return new Trianguladores.Voraz.Voraz();
+                //break;
+                case TipoTriangulado.Ninguna:
+                default:
+                    return null;
+                    //break;
             }
         }
     }

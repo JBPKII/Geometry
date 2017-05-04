@@ -15,7 +15,7 @@ namespace Geometry.Geometrias
         public List<Punto3D> Vertices;
 
         private IList<Triangulo> _Triangulacion = new List<Triangulo>();
-        Operaciones.Triangulaciones.TipoTriangulado _TipoTriangulacion = Operaciones.Triangulaciones.TipoTriangulado.Ninguna;
+        Operaciones.Triangulacion.TipoTriangulado _TipoTriangulacion = Operaciones.Triangulacion.TipoTriangulado.Ninguna;
 
         /// <summary>
         /// Inicializa un polígono sin vértices
@@ -34,7 +34,7 @@ namespace Geometry.Geometrias
         {
             bool Res = false;
 
-            if(_Triangular(Operaciones.Triangulaciones.TipoTriangulado.Delaunay))
+            if(_Triangular(Operaciones.Triangulacion.TipoTriangulado.Delaunay))
             {
                 foreach (Triangulo TestTriangulo in _Triangulacion)
                 {
@@ -55,7 +55,7 @@ namespace Geometry.Geometrias
         /// <param name="TipoTriangulacion"></param>
         /// <param name="ForzarActualizacion"></param>
         /// <returns></returns>
-        private bool _Triangular (Operaciones.Triangulaciones.TipoTriangulado TipoTriangulacion, bool ForzarActualizacion = false)
+        private bool _Triangular (Operaciones.Triangulacion.TipoTriangulado TipoTriangulacion, bool ForzarActualizacion = false)
         {
             bool Res = false;
 
@@ -67,7 +67,7 @@ namespace Geometry.Geometrias
             if (_Triangulacion.Count == 0)
             {
                 //Recalcula la triangualación
-                Operaciones.Triangulaciones.Triangulacion Triang = new Operaciones.Triangulaciones.Triangulacion();
+                Operaciones.Triangulacion.Triangulacion Triang = new Operaciones.Triangulacion.Triangulacion();
                 Triang.TriangularPoligono(this, _TipoTriangulacion);
                 _Triangulacion = Triang.Resultado;
             }

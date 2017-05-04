@@ -66,5 +66,15 @@ namespace Geometry.Geometrias
         {
             return Analisis.AnalisisGeometrico.PuntoEnTriangulo(PTest, P1, P2, P3);
         }
+
+        public Poligono ToPoligono()
+        {
+            Poligono ResPol = new Poligono();
+            ResPol.Vertices.Add(P1);
+            ResPol.Vertices.Add(P2);
+            ResPol.Vertices.Add(P3);
+
+            return ResPol;
+        }
     }
 }

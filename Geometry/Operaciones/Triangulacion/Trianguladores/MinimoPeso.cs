@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 using Geometry.Geometrias;
 
-namespace Geometry.Operaciones.Triangulaciones.Trianguladores
+namespace Geometry.Operaciones.Triangulacion.Trianguladores.MinimoPeso
 {
     /// <summary>
     /// TODO: https://es.wikipedia.org/wiki/Triangulaci%C3%B3n_de_peso_m%C3%ADnimo
@@ -14,6 +14,15 @@ namespace Geometry.Operaciones.Triangulaciones.Trianguladores
         {
             IList<Triangulo> ResTriang = new List<Triangulo>();
             
+
+
+            return ResTriang;
+        }
+
+        public IList<Triangulo> Merge(IList<Triangulo> triangulacion1, IList<Triangulo> triangulacion2)
+        {
+            //TODO: Desarrollar Merge
+            IList<Triangulo> ResTriang = new List<Triangulo>();
 
 
             return ResTriang;

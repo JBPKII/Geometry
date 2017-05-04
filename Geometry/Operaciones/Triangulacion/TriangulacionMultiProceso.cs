@@ -4,7 +4,7 @@ using System.Text;
 
 using Geometry.Geometrias;
 
-namespace Geometry.Operaciones.Triangulaciones.Trianguladores
+namespace Geometry.Operaciones.Triangulacion
 {
     interface ISubProceso
     {
@@ -265,7 +265,7 @@ namespace Geometry.Operaciones.Triangulaciones.Trianguladores
                         if (Indice1 != Indice2 && 
                             _poolResultados[Indice1].Seccion.MallaAnteriorSiguiente.EsConsecutiva(_poolResultados[Indice2].Seccion.MallaAnteriorSiguiente))
                         {
-                            ProcesoMerge = new SubProcesoMerge(_poolResultados[Indice1], _poolResultados[Indice2]);
+                            ProcesoMerge = new SubProcesoMerge(_tipoTriangulado, _poolResultados[Indice1], _poolResultados[Indice2]);
                             break;
                         }
                         //else
@@ -335,13 +335,14 @@ namespace Geometry.Operaciones.Triangulaciones.Trianguladores
             _poolProcesos = new List<ISubProceso>();
 
             //Secciones
-            IList<Triangulaciones.Delaunay.SeccionDelaunay> secciones = _CalcularSecciones(_perimetro, _procesosDedicados);
+            IList<SeccionTriangulacion> secciones = _CalcularSecciones(_perimetro, _procesosDedicados);
 
-            foreach (Triangulaciones.Delaunay.SeccionDelaunay item in secciones)
+            foreach (SeccionTriangulacion item in secciones)
             {
-                _poolProcesos.Add(new SubProcesoTriangulacion(_ContenidoEnSeccion(item.Seccion, _puntos3D),
-                                                              _ContenidoEnSeccion(item.Seccion, _lineasRuptura),
-                                                              item.Seccion,
+                _poolProcesos.Add(new SubProcesoTriangulacion(_tipoTriangulado,
+                                                              _ContenidoEnSeccion(item.TrianguloSeccion, _puntos3D),
+                                                              _ContenidoEnSeccion(item.TrianguloSeccion, _lineasRuptura),
+                                                              item.TrianguloSeccion,
                                                               item.MallaAnteriorSiguiente.MallaAnterior,
                                                               item.MallaAnteriorSiguiente.MallaSiguiente));
             }
@@ -351,9 +352,9 @@ namespace Geometry.Operaciones.Triangulaciones.Trianguladores
             _logProcesoMain.Add(new Log.EventoLog(Log.TypeEvento.Fin, "Repartir datos en cada sector."));
         }
 
-        private List<Triangulaciones.Delaunay.SeccionDelaunay> _CalcularSecciones(Poligono Perimetro, int NumeroSecciones)
+        private List<SeccionTriangulacion> _CalcularSecciones(Poligono Perimetro, int NumeroSecciones)
         {
-            List<Triangulaciones.Delaunay.SeccionDelaunay> resSecciones = new List<Triangulaciones.Delaunay.SeccionDelaunay>();
+            List<SeccionTriangulacion> resSecciones = new List<SeccionTriangulacion>();
 
             try
             {
@@ -384,9 +385,9 @@ namespace Geometry.Operaciones.Triangulaciones.Trianguladores
                     Seccion.P3 = PSiguiente;
                     PAnterior = PSiguiente;
 
-                    Triangulaciones.Delaunay.SeccionDelaunay ResSubSec = new Triangulaciones.Delaunay.SeccionDelaunay()
+                    SeccionTriangulacion ResSubSec = new SeccionTriangulacion()
                     {
-                        Seccion = Seccion
+                        TrianguloSeccion = Seccion
                     };
                     ResSubSec.MallaAnteriorSiguiente.MallaAnterior = i;
                     ResSubSec.MallaAnteriorSiguiente.MallaSiguiente = (i + 1) > NumeroSecciones ? 1 : (i + 1);//Revisar
@@ -399,7 +400,7 @@ namespace Geometry.Operaciones.Triangulaciones.Trianguladores
             {
                 _logProcesoMain.Add(new Log.EventoLog(Log.TypeEvento.Error, sysEx.ToString()));
                 sysEx.Data.Clear();
-                resSecciones = new List<Triangulaciones.Delaunay.SeccionDelaunay>();
+                resSecciones = new List<SeccionTriangulacion>();
             }
 
             return resSecciones;

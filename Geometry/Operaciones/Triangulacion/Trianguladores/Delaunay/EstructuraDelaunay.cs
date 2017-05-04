@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 using Geometry.Geometrias;
 
-namespace Geometry.Operaciones.Triangulaciones.Delaunay
+namespace Geometry.Operaciones.Triangulacion.Trianguladores.Delaunay
 {
     public class IndicesSeccionDelaunay
     {
@@ -29,8 +29,8 @@ namespace Geometry.Operaciones.Triangulaciones.Delaunay
                 return _Resultado;
             }
         }
-        private Triangulaciones.SeccionTriangulacion _Seccion = new Triangulaciones.SeccionTriangulacion();
-        public Triangulaciones.SeccionTriangulacion Seccion
+        private SeccionTriangulacion _Seccion = new SeccionTriangulacion();
+        public SeccionTriangulacion Seccion
         {
             private set
             {

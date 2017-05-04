@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 using Geometry.Geometrias;
 
-namespace Geometry.Operaciones.Triangulaciones.Trianguladores
+namespace Geometry.Operaciones.Triangulacion.Trianguladores.Delaunay
 {
     /// <summary>
     ///https://es.wikipedia.org/wiki/Triangulaci%C3%B3n_de_Delaunay
@@ -20,28 +20,15 @@ namespace Geometry.Operaciones.Triangulaciones.Trianguladores
             //el espacio se divide en el número de procesadores de la máquina y se lanzan sucesivos thread para resolver cada una de las zonas
             //Según terminan se van uniendo y resolviendo cada una de las divisiones en función de cuando terminen
 
-            int currentManagedThread = Environment.CurrentManagedThreadId;
-            int processorCount = Environment.ProcessorCount;
-
-            TriangulacionMultiProceso TrianguladorMultiProceso = new TriangulacionMultiProceso(processorCount);
             
-            TrianguladorMultiProceso.IniciarProceso();
-
-            while (TrianguladorMultiProceso.EstadoProceso == TriangulacionMultiProceso.Estado.EnEjecucion)
-            {
-                System.Threading.Thread.Sleep(300);
-            }
-
-            if(TrianguladorMultiProceso.EstadoProceso == TriangulacionMultiProceso.Estado.Terminado )
-            {
-                ResTriang = TrianguladorMultiProceso.Resultado.Resultado;
-            }
-            else
-            {
-                //TODO: Informar de cada uno de los errores que an detenido cada uno de los procesos
-            }
 
             return ResTriang;
+        }
+
+        public IList<Triangulo> Merge(IList<Triangulo> triangulacion1, IList<Triangulo> triangulacion2)
+        {
+            MergeDelaunay MD = new MergeDelaunay(triangulacion1, triangulacion2);
+            return MD.DoMerge();
         }
     }
 }

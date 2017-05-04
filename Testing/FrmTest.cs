@@ -11,7 +11,7 @@ using System.Xml.Serialization;
 using System.IO;
 
 using Geometry.Geometrias;
-using Geometry.Operaciones.Triangulaciones;
+using Geometry.Operaciones.Triangulacion;
 
 namespace Testing
 {
@@ -174,6 +174,9 @@ namespace Testing
         private void CmBTriangularPuntos_Click(object sender, EventArgs e)
         {
             //TODO: Triangular los puntos autogenerados
+            Geometry.Operaciones.Triangulacion.Triangulacion DelaTriang = new Geometry.Operaciones.Triangulacion.Triangulacion();
+            DelaTriang.TriangularMalla(new Poligono(), new List<Linea>(), lstPuntos3d, TipoTriangulado.Delaunay);
+
         }
         #endregion
 

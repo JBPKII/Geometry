@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using Geometry.Geometrias;
 
-namespace Geometry.Operaciones.Triangulaciones.Trianguladores
+namespace Geometry.Operaciones.Triangulacion
 {
     class SubProcesoMerge : ISubProceso
     {
@@ -24,7 +24,7 @@ namespace Geometry.Operaciones.Triangulaciones.Trianguladores
             }
         }
 
-        private IResultadoTriangulacion _ResTriangulacion = new Triangulaciones.Delaunay.ResultadoDelaunay();
+        private IResultadoTriangulacion _ResTriangulacion;
 
         private TriangulacionMultiProceso.Estado _Estado = TriangulacionMultiProceso.Estado.Vacio;
         public TriangulacionMultiProceso.Estado Estado
@@ -54,10 +54,11 @@ namespace Geometry.Operaciones.Triangulaciones.Trianguladores
             }
         }
 
-        public SubProcesoMerge (IResultadoTriangulacion Triang1, IResultadoTriangulacion Triang2)
+        public SubProcesoMerge (TipoTriangulado tipoTriangulado, IResultadoTriangulacion Triang1, IResultadoTriangulacion Triang2)
         {
             _logProceso.Add(new Log.EventoLog(Log.TypeEvento.Inicio, "Inicialización el Proceso."));
 
+            _tipoTriangulado = tipoTriangulado;
             _triangulacion1 = Triang1.Resultado;
             _triangulacion2 = Triang2.Resultado;
 
@@ -101,8 +102,12 @@ namespace Geometry.Operaciones.Triangulaciones.Trianguladores
 
                 _logProceso.Add(new Log.EventoLog(Log.TypeEvento.Inicio, "Procesa el Merge."));
 
-                //TODO: Ejecutar Merge
+                ITriangulador Triangulador = Triangulacion.GetNewMerge(_tipoTriangulado);
 
+                IList<Triangulo> ResTriang = Triangulador.Merge(_triangulacion1, _triangulacion2);
+
+                //TODO: Ejecutar Merge
+                _ResTriangulacion = null;
 
 
                 _Estado = TriangulacionMultiProceso.Estado.Terminado;

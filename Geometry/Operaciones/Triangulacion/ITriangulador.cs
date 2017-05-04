@@ -3,10 +3,11 @@ using System.Collections.Generic;
 
 using Geometry.Geometrias;
 
-namespace Geometry.Operaciones.Triangulaciones
+namespace Geometry.Operaciones.Triangulacion
 {
-    interface ITriangulador
+    public interface ITriangulador
     {
         IList<Triangulo> Triangular(Poligono Perimetro, List<Linea> LineasRuptura, List<Punto3D> Puntos);
+        IList<Triangulo> Merge(IList<Triangulo> triangulacion1, IList<Triangulo> triangulacion2);
     } 
 }

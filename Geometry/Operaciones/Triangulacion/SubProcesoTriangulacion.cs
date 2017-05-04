@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using Geometry.Geometrias;
 
-namespace Geometry.Operaciones.Triangulaciones.Trianguladores
+namespace Geometry.Operaciones.Triangulacion
 {
     class SubProcesoTriangulacion : ISubProceso
     {
@@ -25,7 +25,7 @@ namespace Geometry.Operaciones.Triangulaciones.Trianguladores
             }
         }
 
-        private IResultadoTriangulacion _ResTriangulacion = new Triangulaciones.Delaunay.ResultadoDelaunay();
+        private IResultadoTriangulacion _ResTriangulacion;
 
         private TriangulacionMultiProceso.Estado _Estado = TriangulacionMultiProceso.Estado.Vacio;
         public TriangulacionMultiProceso.Estado Estado
@@ -60,6 +60,7 @@ namespace Geometry.Operaciones.Triangulaciones.Trianguladores
         {
             _logProceso.Add(new Log.EventoLog(Log.TypeEvento.Inicio, "Inicialización del Proceso."));
 
+            _tipoTriangulado = tipoTriangulado;
             _vertices = Vertices;
             _rupturas = Rupturas;
             _envolvente = Envolvente;
@@ -85,8 +86,12 @@ namespace Geometry.Operaciones.Triangulaciones.Trianguladores
 
                 _logProceso.Add(new Log.EventoLog(Log.TypeEvento.Inicio, "Procesa la Triangulación."));
 
-                //TODO: Ejecutar Triangulación
+                ITriangulador Triangulador = Triangulacion.GetNewTriangulador(_tipoTriangulado);
 
+                IList<Triangulo> ResTriang = Triangulador.Triangular(_envolvente.ToPoligono(), _rupturas, _vertices);
+
+                //TODO: Ejecutar Triangulación
+                _ResTriangulacion = null;
 
 
                 _Estado = TriangulacionMultiProceso.Estado.Terminado;
