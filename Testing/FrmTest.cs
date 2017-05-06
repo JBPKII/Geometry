@@ -71,7 +71,7 @@ namespace Testing
             try
             {
                 //Des-serializa la colección de vértices
-                lstPuntos3d = GeomSerialize.DesSerializaPuntos3D(TxtRuta.Text);
+                lstPuntos3d = Geometry.Geometrias.Serialize.Serialize.DesSerializaPuntos3D(TxtRuta.Text);
             }
             catch (Exception sysEx)
             {
@@ -110,7 +110,7 @@ namespace Testing
                 }
 
                 //Serializa la colección de vértices
-                GeomSerialize.SerializaPuntos3D(TxtRuta.Text, lstPuntos3d);
+                Geometry.Geometrias.Serialize.Serialize.SerializaPuntos3D(TxtRuta.Text, lstPuntos3d);
             }
             catch (Exception sysEx)
             {
@@ -126,56 +126,94 @@ namespace Testing
 
         private void CargarDGV()
         {
-            try
+            System.Threading.Thread Th = new System.Threading.Thread(new System.Threading.ParameterizedThreadStart(CargarDGV));
+            Th.Start(DGV);
+        }
+
+        delegate void ControlDGVCallback(object ControlDGV);
+        private void CargarDGV(object ControlDGV)
+        {
+            if (ControlDGV is DataGridView cDGV)
             {
-                //Formatea y carga el DGV
-                DGV.Rows.Clear();
-                DGV.Columns.Clear();
-
-                DGV.AllowUserToAddRows = false;
-                DGV.AllowUserToDeleteRows = false;
-                DGV.AllowUserToOrderColumns = true;
-                DGV.AllowUserToResizeColumns = true;
-                DGV.AllowUserToResizeRows = false;
-                DGV.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
-                DGV.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-
-                DGV.Columns.Add("id", "ID:");
-                DGV.Columns.Add("x", "X:");
-                DGV.Columns.Add("y", "Y:");
-                DGV.Columns.Add("z", "Z:");
-                DGV.Columns.Add("descrip", "Descripción:");
-                DGV.Columns[0].ValueType = typeof(long);
-                DGV.Columns[1].ValueType = typeof(double);
-                DGV.Columns[2].ValueType = typeof(double);
-                DGV.Columns[3].ValueType = typeof(double);
-                DGV.Columns[4].ValueType = typeof(string);
-
-                foreach (Punto3D itemP3D in lstPuntos3d)
+                if (cDGV.InvokeRequired)
                 {
-                    DataGridViewRow Dgvr = new DataGridViewRow();
-                    Dgvr.CreateCells(DGV);
-
-                    Dgvr.Cells[0].Value = itemP3D.ID;
-                    Dgvr.Cells[1].Value = itemP3D.X;
-                    Dgvr.Cells[2].Value = itemP3D.Y;
-                    Dgvr.Cells[3].Value = itemP3D.Z;
-                    Dgvr.Cells[4].Value = itemP3D.Descripcion;
-
-                    DGV.Rows.Add(Dgvr);
+                    ControlDGVCallback d = new ControlDGVCallback(CargarDGV);
+                    cDGV.Invoke(d, new object[] { ControlDGV });
                 }
-            }
-            catch (Exception dgvEx)
-            {
-                dgvEx.Data.Clear();
+                else
+                {
+                    try
+                    {
+                        cDGV.Cursor = Cursors.WaitCursor;
+
+                        cDGV.SuspendLayout();
+
+                        //Formatea y carga el DGV
+                        cDGV.Rows.Clear();
+                        cDGV.Columns.Clear();
+
+                        cDGV.AllowUserToAddRows = false;
+                        cDGV.AllowUserToDeleteRows = false;
+                        cDGV.AllowUserToOrderColumns = true;
+                        cDGV.AllowUserToResizeColumns = true;
+                        cDGV.AllowUserToResizeRows = false;
+                        cDGV.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
+                        cDGV.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+
+                        cDGV.Columns.Add("id", "ID:");
+                        cDGV.Columns.Add("x", "X:");
+                        cDGV.Columns.Add("y", "Y:");
+                        cDGV.Columns.Add("z", "Z:");
+                        cDGV.Columns.Add("descrip", "Descripción:");
+                        cDGV.Columns[0].ValueType = typeof(long);
+                        cDGV.Columns[1].ValueType = typeof(double);
+                        cDGV.Columns[2].ValueType = typeof(double);
+                        cDGV.Columns[3].ValueType = typeof(double);
+                        cDGV.Columns[4].ValueType = typeof(string);
+
+                        foreach (Punto3D itemP3D in lstPuntos3d)
+                        {
+                            DataGridViewRow Dgvr = new DataGridViewRow();
+                            Dgvr.CreateCells(DGV);
+
+                            Dgvr.Cells[0].Value = itemP3D.ID;
+                            Dgvr.Cells[1].Value = itemP3D.X;
+                            Dgvr.Cells[2].Value = itemP3D.Y;
+                            Dgvr.Cells[3].Value = itemP3D.Z;
+                            Dgvr.Cells[4].Value = itemP3D.Descripcion;
+
+                            cDGV.Rows.Add(Dgvr);
+                        }
+                    }
+                    catch (Exception dgvEx)
+                    {
+                        dgvEx.Data.Clear();
+                    }
+                    finally
+                    {
+                        cDGV.ResumeLayout(false);
+                        cDGV.Refresh();
+                        cDGV.Cursor = Cursors.Default;
+                    }
+                }
             }
         }
 
         private void CmBTriangularPuntos_Click(object sender, EventArgs e)
         {
-            //TODO: Triangular los puntos autogenerados
+            //Triangular los puntos autogenerados
+            IList<Triangulo> Res = new List<Triangulo>();
+
             Geometry.Operaciones.Triangulacion.Triangulacion DelaTriang = new Geometry.Operaciones.Triangulacion.Triangulacion();
-            DelaTriang.TriangularMalla(new Poligono(), new List<Linea>(), lstPuntos3d, TipoTriangulado.Delaunay);
+
+            if(DelaTriang.TriangularMalla(new Poligono(), new List<Linea>(), lstPuntos3d, TipoTriangulado.Delaunay))
+            {
+                IList<Triangulo> Res = DelaTriang.Resultado;
+            }
+            else
+            {
+
+            }
 
         }
         #endregion

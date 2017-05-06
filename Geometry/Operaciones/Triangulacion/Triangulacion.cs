@@ -32,9 +32,9 @@ namespace Geometry.Operaciones.Triangulacion
         Voraz
     }
 
-    interface IResultadoTriangulacion
+    public interface IResultadoTriangulacion
     {
-        IList<Triangulo> Resultado { get; }
+        IList<Triangulo> Resultado { get; set; }
         SeccionTriangulacion Seccion { get; }
     }
 
@@ -138,8 +138,12 @@ namespace Geometry.Operaciones.Triangulacion
 
             TriangulacionMultiProceso TrianguladorMultiProceso = new TriangulacionMultiProceso(processorCount)
             {
-                TipoTriangulado = Metodo
+                TipoTriangulado = Metodo,
+                Perimetro = PerimetroExclusion,
+                LineasRuptura = LineasRuptura,
+                Puntos3D = Puntos
             };
+
             TrianguladorMultiProceso.IniciarProceso();
 
             while (TrianguladorMultiProceso.EstadoProceso == TriangulacionMultiProceso.Estado.EnEjecucion)
@@ -198,6 +202,29 @@ namespace Geometry.Operaciones.Triangulacion
                 //break;
                 case TipoTriangulado.Voraz:
                     return new Trianguladores.Voraz.Voraz();
+                //break;
+                case TipoTriangulado.Ninguna:
+                default:
+                    return null;
+                    //break;
+            }
+        }
+
+        public static IResultadoTriangulacion GetNewResultadoTriangulacion(TipoTriangulado Metodo)
+        {
+            switch (Metodo)
+            {
+                case TipoTriangulado.Abanico:
+                    return new Trianguladores.Abanico.ResultadoAbanico();
+                //break;
+                case TipoTriangulado.Delaunay:
+                    return new Trianguladores.Delaunay.ResultadoDelaunay();
+                //break;
+                case TipoTriangulado.MinimoPeso:
+                    return new Trianguladores.MinimoPeso.ResultadoMinimoPeso();
+                //break;
+                case TipoTriangulado.Voraz:
+                    return new Trianguladores.Voraz.ResultadoVoraz();
                 //break;
                 case TipoTriangulado.Ninguna:
                 default:

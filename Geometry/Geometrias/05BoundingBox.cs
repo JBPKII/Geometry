@@ -151,5 +151,17 @@ namespace Geometry.Geometrias
 
             return Res;
         }
+
+        public Poligono ToPoligono()
+        {
+            Poligono ResPol = new Poligono();
+
+            ResPol.Vertices.Add(_Min);
+            ResPol.Vertices.Add(new Punto3D(_Min.X, _Max.Y, (_Min.Z + _Max.Z) / 2.0));
+            ResPol.Vertices.Add(_Max);
+            ResPol.Vertices.Add(new Punto3D(_Max.X, _Min.Y, (_Min.Z + _Max.Z) / 2.0));
+
+            return ResPol;
+        }
     }
 }

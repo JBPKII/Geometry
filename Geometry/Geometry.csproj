@@ -46,20 +46,24 @@
     <Compile Include="Geometrias\03Triangulo.cs" />
     <Compile Include="Geometrias\04Poligono.cs" />
     <Compile Include="Geometrias\05BoundingBox.cs" />
+    <Compile Include="Geometrias\Serialize.cs" />
     <Compile Include="Log\Log.cs" />
     <Compile Include="Matrices\Matriz.cs" />
     <Compile Include="Operaciones\AnalisisGeometrico.cs" />
     <Compile Include="Operaciones\Triangulacion\ITriangulador.cs" />
     <Compile Include="Operaciones\Triangulacion\Triangulacion.cs" />
-    <Compile Include="Operaciones\Triangulacion\Trianguladores\Abanico.cs" />
+    <Compile Include="Operaciones\Triangulacion\Trianguladores\Abanico\Abanico.cs" />
+    <Compile Include="Operaciones\Triangulacion\Trianguladores\Abanico\EstructuraAbanico.cs" />
     <Compile Include="Operaciones\Triangulacion\Trianguladores\Delaunay\Delaunay.cs" />
     <Compile Include="Operaciones\Triangulacion\Trianguladores\Delaunay\EstructuraDelaunay.cs" />
     <Compile Include="Operaciones\Triangulacion\Trianguladores\Delaunay\MergeDelaunay.cs" />
-    <Compile Include="Operaciones\Triangulacion\Trianguladores\MinimoPeso.cs" />
+    <Compile Include="Operaciones\Triangulacion\Trianguladores\MinimoPeso\EstructuraMinimpPeso.cs" />
+    <Compile Include="Operaciones\Triangulacion\Trianguladores\MinimoPeso\MinimoPeso.cs" />
     <Compile Include="Operaciones\Triangulacion\TriangulacionMultiProceso.cs" />
     <Compile Include="Operaciones\Triangulacion\SubProcesoMerge.cs" />
     <Compile Include="Operaciones\Triangulacion\SubProcesoTriangulacion.cs" />
-    <Compile Include="Operaciones\Triangulacion\Trianguladores\Voraz.cs" />
+    <Compile Include="Operaciones\Triangulacion\Trianguladores\Voraz\EstructuraVoraz.cs" />
+    <Compile Include="Operaciones\Triangulacion\Trianguladores\Voraz\Voraz.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

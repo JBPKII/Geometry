@@ -8,9 +8,9 @@ using System.IO;
 
 using Geometry.Geometrias;
 
-namespace Testing
+namespace Geometry.Geometrias.Serialize
 {
-    class GeomSerialize
+    public class Serialize
     {
         public static void SerializaPuntos3D(string rutaXml, List<Punto3D> lstPuntos3D)
         {
@@ -26,7 +26,7 @@ namespace Testing
         {
             List<Punto3D> Res = new List<Punto3D>();
 
-            XmlSerializer xmlUnserializer = new XmlSerializer(typeof(Punto3D));
+            XmlSerializer xmlUnserializer = new XmlSerializer(Res.GetType(), "Geometry");
 
             xmlUnserializer.UnknownNode += new XmlNodeEventHandler(Unserializer_UnknownNode);
             xmlUnserializer.UnknownAttribute += new XmlAttributeEventHandler(Unserializer_UnknownAttribute);

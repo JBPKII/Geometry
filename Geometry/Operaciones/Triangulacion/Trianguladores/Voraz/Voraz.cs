@@ -3,17 +3,15 @@ using System.Collections.Generic;
 
 using Geometry.Geometrias;
 
-namespace Geometry.Operaciones.Triangulacion.Trianguladores.MinimoPeso
+namespace Geometry.Operaciones.Triangulacion.Trianguladores.Voraz
 {
-    /// <summary>
-    /// TODO: https://es.wikipedia.org/wiki/Triangulaci%C3%B3n_de_peso_m%C3%ADnimo
-    /// </summary>
-    class MinimoPeso : ITriangulador
+    class Voraz : ITriangulador
     {
         public IList<Triangulo> Triangular(Poligono Perimetro, List<Linea> LineasRuptura, List<Punto3D> Puntos)
         {
+            //TODO: Algoritmo triangulación Voraz
             IList<Triangulo> ResTriang = new List<Triangulo>();
-            
+            //https://es.wikipedia.org/wiki/Algoritmo_de_triangulaci%C3%B3n_voraz
 
 
             return ResTriang;

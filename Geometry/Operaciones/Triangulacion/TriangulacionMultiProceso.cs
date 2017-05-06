@@ -49,7 +49,7 @@ namespace Geometry.Operaciones.Triangulacion
         private int _procesosEnEjecucion = 0;
 
 
-        private Poligono _perimetro;
+        private Poligono _perimetro = new Poligono();
         public Poligono Perimetro
         {
             private get
@@ -61,7 +61,7 @@ namespace Geometry.Operaciones.Triangulacion
                 _perimetro = value;
             }
         }
-        private List<Linea> _lineasRuptura;
+        private List<Linea> _lineasRuptura = new List<Linea>();
         public List<Linea> LineasRuptura
         {
             private get
@@ -73,7 +73,7 @@ namespace Geometry.Operaciones.Triangulacion
                 _lineasRuptura = value;
             }
         }
-        private List<Punto3D> _puntos3D;
+        private List<Punto3D> _puntos3D = new List<Punto3D>();
         public List<Punto3D> Puntos3D
         {
             private get
@@ -171,7 +171,7 @@ namespace Geometry.Operaciones.Triangulacion
             }
         }
 
-        public void DetenerProcesos()
+        private void _DetenerProcesos()
         {
             _logProcesoMain.Add(new Log.EventoLog(Log.TypeEvento.Inicio, "Detener Subprocesos."));
 
@@ -202,22 +202,22 @@ namespace Geometry.Operaciones.Triangulacion
             {
                 lock (_poolResultados)
                 {
-                    if (sender is ISubProceso CurrentSubproceso)
+                    if (sender is ISubProceso CurrSubproceso)
                     {
                         //libera el que ha terminado
-                        _poolResultados.Add(CurrentSubproceso.Resultado);
-                        CurrentSubproceso.Filanlizado -= SubProceso_Filanlizado;
-                        _poolProcesos.Remove(CurrentSubproceso);
+                        _poolResultados.Add(CurrSubproceso.Resultado);
+                        CurrSubproceso.Filanlizado -= SubProceso_Filanlizado;
+                        _poolProcesos.Remove(CurrSubproceso);
 
-                        _log.LogProcesos.Add(CurrentSubproceso.LogProceso);
+                        _log.LogProcesos.Add(CurrSubproceso.LogProceso);
 
                         _procesosEnEjecucion--;
 
-                        if(CurrentSubproceso.Estado == Estado.ConErrores)
+                        if(CurrSubproceso.Estado == Estado.ConErrores)
                         {
                             _logProcesoMain.Add(new Log.EventoLog(Log.TypeEvento.Advertencia, "SubProceso Finalizado con errores."));
 
-                            DetenerProcesos();
+                            _DetenerProcesos();
                             Finalizar = true;
                         }
                     }
@@ -229,7 +229,7 @@ namespace Geometry.Operaciones.Triangulacion
                         _ArrancarSubProcesos();
 
                         //condiciones de parada
-                        if (_poolProcesos.Count == 0)
+                        if (_poolProcesos.Count == 0 && _poolResultados.Count == 1)
                         {
                             _estadoProceso = Estado.Terminado;
                             //TODO: Transmitir errores o proceso mediante un log en el resultado o similar
@@ -256,7 +256,7 @@ namespace Geometry.Operaciones.Triangulacion
                 int Indice1 = -1, Indice2 = -1;
                 ISubProceso ProcesoMerge = null;
 
-                //TODO: Obtener dos índices consecutivos dentro de la malla
+                //Obtiene dos índices consecutivos dentro de la malla
                 //compara todos con todos para encontrar los consercutivos
                 for (Indice1 = 0; Indice1 < _poolResultados.Count; Indice1++)
                 {
@@ -265,13 +265,10 @@ namespace Geometry.Operaciones.Triangulacion
                         if (Indice1 != Indice2 && 
                             _poolResultados[Indice1].Seccion.MallaAnteriorSiguiente.EsConsecutiva(_poolResultados[Indice2].Seccion.MallaAnteriorSiguiente))
                         {
+                            //Encuentra las posibles mallas consecutivas
                             ProcesoMerge = new SubProcesoMerge(_tipoTriangulado, _poolResultados[Indice1], _poolResultados[Indice2]);
                             break;
                         }
-                        //else
-                        //{
-                        //    pasa a la siguiente combinación
-                        //}
                     }
 
                     if (ProcesoMerge != null)
@@ -300,12 +297,12 @@ namespace Geometry.Operaciones.Triangulacion
         {
             if (_procesosEnEjecucion < _procesosDedicados)
             {
-                _logProcesoMain.Add(new Log.EventoLog(Log.TypeEvento.Inicio, "Iniciar SubProcesos"));
-
                 foreach (ISubProceso itemSubProceso in _poolProcesos)
                 {
                     if (itemSubProceso.Estado == Estado.EnEspera)
                     {
+                        _logProcesoMain.Add(new Log.EventoLog(Log.TypeEvento.Inicio, "Iniciar SubProceso"));
+
                         itemSubProceso.Filanlizado += SubProceso_Filanlizado;
 
                         //itemSubProceso.Ejecutar();
@@ -315,14 +312,15 @@ namespace Geometry.Operaciones.Triangulacion
                         _procesosEnEjecucion++;
 
                         itemSubProceso.OnThread.Start();
+
+                        _logProcesoMain.Add(new Log.EventoLog(Log.TypeEvento.Fin, "Iniciar SubProceso"));
                     }
+
                     if (_procesosEnEjecucion >= _procesosDedicados)
                     {
                         break;
                     }
                 }
-
-                _logProcesoMain.Add(new Log.EventoLog(Log.TypeEvento.Fin, "Iniciar SubProcesos"));
             }
         }
 
@@ -336,6 +334,10 @@ namespace Geometry.Operaciones.Triangulacion
 
             //Secciones
             IList<SeccionTriangulacion> secciones = _CalcularSecciones(_perimetro, _procesosDedicados);
+            if(secciones.Count==0)
+            {
+                secciones = _CalcularSecciones(_puntos3D, _procesosDedicados);
+            }
 
             foreach (SeccionTriangulacion item in secciones)
             {
@@ -347,8 +349,6 @@ namespace Geometry.Operaciones.Triangulacion
                                                               item.MallaAnteriorSiguiente.MallaSiguiente));
             }
 
-            _estadoProceso = Estado.EnEspera;
-
             _logProcesoMain.Add(new Log.EventoLog(Log.TypeEvento.Fin, "Repartir datos en cada sector."));
         }
 
@@ -359,42 +359,83 @@ namespace Geometry.Operaciones.Triangulacion
             try
             {
                 //Calcula las secciones que envuelven al polígono
-                BBox BBoxPoligono = new BBox();
-                foreach (Punto3D P3D in Perimetro.Vertices)
+                if (Perimetro.Vertices.Count > 0)
                 {
-                    BBoxPoligono.Añadir(P3D);
-                }
+                    BBox BBoxPoligono = new BBox();
+                    foreach (Punto3D P3D in Perimetro.Vertices)
+                    {
+                        BBoxPoligono.Añadir(P3D);
+                    }
 
-                double RadioCircinscrito = Math.Max(BBoxPoligono.Ancho, BBoxPoligono.Alto) / 2.0;
-                Punto3D PMedio = new Punto3D((BBoxPoligono.Maximo.X + BBoxPoligono.Minimo.X) / 2.0,
-                                             (BBoxPoligono.Maximo.Y + BBoxPoligono.Minimo.Y) / 2.0,
-                                             0.0);
-                Punto3D PAnterior = new Punto3D(PMedio.X + RadioCircinscrito, PMedio.Y, 0.0);
-                for (int i = 1; i <= NumeroSecciones; i++)
+                    double RadioCircinscrito = Math.Sqrt(Math.Pow(BBoxPoligono.Ancho, 2.0) + Math.Pow(BBoxPoligono.Alto, 2.0)) / 2.0;
+                    Punto3D PMedio = new Punto3D((BBoxPoligono.Maximo.X + BBoxPoligono.Minimo.X) / 2.0,
+                                                 (BBoxPoligono.Maximo.Y + BBoxPoligono.Minimo.Y) / 2.0,
+                                                 0.0);
+                    Punto3D PAnterior = new Punto3D(PMedio.X + RadioCircinscrito, PMedio.Y, 0.0);
+                    for (int i = 1; i <= NumeroSecciones; i++)
+                    {
+                        Triangulo Seccion = new Triangulo()
+                        {
+                            P1 = PMedio,
+                            P2 = PAnterior
+                        };
+                        double Alfa = double.Parse(i.ToString()) * 2.0 * Math.PI / double.Parse(NumeroSecciones.ToString());
+                        Punto3D PSiguiente = new Punto3D(PMedio.X + (RadioCircinscrito * Math.Cos(Alfa)),
+                                                         PMedio.Y + (RadioCircinscrito * Math.Sin(Alfa)),
+                                                         0.0);
+
+                        Seccion.P3 = PSiguiente;
+                        PAnterior = PSiguiente;
+
+                        SeccionTriangulacion ResSubSec = new SeccionTriangulacion()
+                        {
+                            TrianguloSeccion = Seccion
+                        };
+                        ResSubSec.MallaAnteriorSiguiente.MallaAnterior = i;
+                        ResSubSec.MallaAnteriorSiguiente.MallaSiguiente = (i + 1) > NumeroSecciones ? 1 : (i + 1);//Revisar
+                        resSecciones.Add(ResSubSec);
+                    }
+
+                    _logProcesoMain.Add(new Log.EventoLog(Log.TypeEvento.Informacion, "Generados " + resSecciones.Count + " sectores."));
+                }
+                else
                 {
-                    Triangulo Seccion = new Triangulo()
-                    {
-                        P1 = PMedio,
-                        P2 = PAnterior
-                    };
-                    double Alfa = double.Parse(i.ToString()) * 2.0 * Math.PI / double.Parse(NumeroSecciones.ToString());
-                    Punto3D PSiguiente = new Punto3D(PMedio.X + (RadioCircinscrito * Math.Cos(Alfa)),
-                                                     PMedio.Y + (RadioCircinscrito * Math.Sin(Alfa)),
-                                                     0.0);
-
-                    Seccion.P3 = PSiguiente;
-                    PAnterior = PSiguiente;
-
-                    SeccionTriangulacion ResSubSec = new SeccionTriangulacion()
-                    {
-                        TrianguloSeccion = Seccion
-                    };
-                    ResSubSec.MallaAnteriorSiguiente.MallaAnterior = i;
-                    ResSubSec.MallaAnteriorSiguiente.MallaSiguiente = (i + 1) > NumeroSecciones ? 1 : (i + 1);//Revisar
-                    resSecciones.Add(ResSubSec);
+                    _logProcesoMain.Add(new Log.EventoLog(Log.TypeEvento.Informacion, "No se han encontrado vértices en el perímetro."));
+                    resSecciones = new List<SeccionTriangulacion>();
                 }
+            }
+            catch (Exception sysEx)
+            {
+                _logProcesoMain.Add(new Log.EventoLog(Log.TypeEvento.Error, sysEx.ToString()));
+                sysEx.Data.Clear();
+                resSecciones = new List<SeccionTriangulacion>();
+            }
 
-                _logProcesoMain.Add(new Log.EventoLog(Log.TypeEvento.Informacion, "Generados " + resSecciones.Count + " sectores."));
+            return resSecciones;
+        }
+
+        private List<SeccionTriangulacion> _CalcularSecciones(IList<Punto3D> Puntos, int NumeroSecciones)
+        {
+            List<SeccionTriangulacion> resSecciones = new List<SeccionTriangulacion>();
+
+            try
+            {
+                if (Puntos.Count != 0)
+                {
+                    //calcula el cierre convexo
+                    BBox BB = new BBox();
+                    foreach (Punto3D itemP3D in Puntos)
+                    {
+                        BB.Añadir(itemP3D);
+                    }
+                    Poligono cierreConvexo = BB.ToPoligono();
+                    resSecciones = _CalcularSecciones(cierreConvexo, NumeroSecciones);
+                }
+                else
+                {
+                    _logProcesoMain.Add(new Log.EventoLog(Log.TypeEvento.Informacion, "No se han encontrado puntos."));
+                    resSecciones = new List<SeccionTriangulacion>();
+                }
             }
             catch (Exception sysEx)
             {

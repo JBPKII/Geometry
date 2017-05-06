@@ -3,19 +3,19 @@ using System.Collections.Generic;
 
 using Geometry.Geometrias;
 
-namespace Geometry.Operaciones.Triangulacion.Trianguladores.Delaunay
+namespace Geometry.Operaciones.Triangulacion.Trianguladores.Abanico
 {
-    public class IndicesSeccionDelaunay
+    public class IndicesSeccionAbanico
     {
         public int MallaAnterior = -1;
         public int MallaSiguiente = -1;
     }
-    public class SeccionDelaunay
+    public class SeccionAbanico
     {
         public Triangulo Seccion = new Triangulo();
-        public IndicesSeccionDelaunay MallaAnteriorSiguiente = new IndicesSeccionDelaunay();
+        public IndicesSeccionAbanico MallaAnteriorSiguiente = new IndicesSeccionAbanico();
     }
-    public class ResultadoDelaunay : IResultadoTriangulacion
+    public class ResultadoAbanico : IResultadoTriangulacion
     {
         private IList<Triangulo> _Resultado = new List<Triangulo>();
         public IList<Triangulo> Resultado
@@ -43,9 +43,9 @@ namespace Geometry.Operaciones.Triangulacion.Trianguladores.Delaunay
         }
     }
 
-    public class EstructuraDelaunay
+    public class EstructuraAbanico
     {
-        public EstructuraDelaunay()
+        public EstructuraAbanico()
         {
         }
     }

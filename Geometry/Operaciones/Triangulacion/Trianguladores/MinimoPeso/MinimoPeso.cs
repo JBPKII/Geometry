@@ -3,16 +3,18 @@ using System.Collections.Generic;
 
 using Geometry.Geometrias;
 
-namespace Geometry.Operaciones.Triangulacion.Trianguladores.Abanico
+namespace Geometry.Operaciones.Triangulacion.Trianguladores.MinimoPeso
 {
     /// <summary>
-    /// TODO: https://es.wikipedia.org/wiki/Triangulaci%C3%B3n_en_abanico
+    /// https://es.wikipedia.org/wiki/Triangulaci%C3%B3n_de_peso_m%C3%ADnimo
     /// </summary>
-    class Abanico : ITriangulador
+    class MinimoPeso : ITriangulador
     {
         public IList<Triangulo> Triangular(Poligono Perimetro, List<Linea> LineasRuptura, List<Punto3D> Puntos)
         {
+            //TODO: Algoritmo triangulación MinimoPeso
             IList<Triangulo> ResTriang = new List<Triangulo>();
+            
 
 
             return ResTriang;

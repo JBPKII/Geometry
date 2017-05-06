@@ -3,14 +3,17 @@ using System.Collections.Generic;
 
 using Geometry.Geometrias;
 
-namespace Geometry.Operaciones.Triangulacion.Trianguladores.Voraz
+namespace Geometry.Operaciones.Triangulacion.Trianguladores.Abanico
 {
-    class Voraz : ITriangulador
+    /// <summary>
+    /// https://es.wikipedia.org/wiki/Triangulaci%C3%B3n_en_abanico
+    /// </summary>
+    class Abanico : ITriangulador
     {
         public IList<Triangulo> Triangular(Poligono Perimetro, List<Linea> LineasRuptura, List<Punto3D> Puntos)
         {
+            //TODO: Algoritmo triangulación Abanico
             IList<Triangulo> ResTriang = new List<Triangulo>();
-            //TODO: https://es.wikipedia.org/wiki/Algoritmo_de_triangulaci%C3%B3n_voraz
 
 
             return ResTriang;

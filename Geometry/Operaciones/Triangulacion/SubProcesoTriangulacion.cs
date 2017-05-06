@@ -10,7 +10,6 @@ namespace Geometry.Operaciones.Triangulacion
         private TipoTriangulado _tipoTriangulado = TipoTriangulado.Delaunay;
         private List<Punto3D> _vertices = new List<Punto3D>();
         private List<Linea> _rupturas = new List<Linea>();
-        private Triangulo _envolvente = new Triangulo();
 
         private System.Threading.Thread _OnThread;
         public System.Threading.Thread OnThread
@@ -63,12 +62,12 @@ namespace Geometry.Operaciones.Triangulacion
             _tipoTriangulado = tipoTriangulado;
             _vertices = Vertices;
             _rupturas = Rupturas;
-            _envolvente = Envolvente;
 
             //Añade a la triangulación los índices de la malla anterior y la siguiente
+            _ResTriangulacion = Triangulacion.GetNewResultadoTriangulacion(tipoTriangulado);
             _ResTriangulacion.Seccion.TrianguloSeccion = Envolvente;
             _ResTriangulacion.Seccion.MallaAnteriorSiguiente.MallaAnterior = MallaAnterior;
-            _ResTriangulacion.Seccion.MallaAnteriorSiguiente.MallaAnterior = MallaSiguiente;
+            _ResTriangulacion.Seccion.MallaAnteriorSiguiente.MallaSiguiente = MallaSiguiente;
 
             _logProceso.Add(new Log.EventoLog(Log.TypeEvento.Fin, "Inicialización del Proceso."));
 
@@ -88,11 +87,8 @@ namespace Geometry.Operaciones.Triangulacion
 
                 ITriangulador Triangulador = Triangulacion.GetNewTriangulador(_tipoTriangulado);
 
-                IList<Triangulo> ResTriang = Triangulador.Triangular(_envolvente.ToPoligono(), _rupturas, _vertices);
-
-                //TODO: Ejecutar Triangulación
-                _ResTriangulacion = null;
-
+                //Calcula Triangulación
+                _ResTriangulacion.Resultado = Triangulador.Triangular(_ResTriangulacion.Seccion.TrianguloSeccion.ToPoligono(), _rupturas, _vertices);
 
                 _Estado = TriangulacionMultiProceso.Estado.Terminado;
             }

@@ -62,6 +62,7 @@ namespace Geometry.Operaciones.Triangulacion
             _triangulacion1 = Triang1.Resultado;
             _triangulacion2 = Triang2.Resultado;
 
+            _ResTriangulacion = Triangulacion.GetNewResultadoTriangulacion(tipoTriangulado);
             if (Triang1.Seccion.MallaAnteriorSiguiente.MallaAnterior == Triang2.Seccion.MallaAnteriorSiguiente.MallaSiguiente)
             {
                 // 1,2 - 0,1
@@ -104,11 +105,8 @@ namespace Geometry.Operaciones.Triangulacion
 
                 ITriangulador Triangulador = Triangulacion.GetNewMerge(_tipoTriangulado);
 
-                IList<Triangulo> ResTriang = Triangulador.Merge(_triangulacion1, _triangulacion2);
-
-                //TODO: Ejecutar Merge
-                _ResTriangulacion = null;
-
+                //Calcula Merge
+                _ResTriangulacion.Resultado = Triangulador.Merge(_triangulacion1, _triangulacion2);
 
                 _Estado = TriangulacionMultiProceso.Estado.Terminado;
             }
