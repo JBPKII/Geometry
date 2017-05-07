@@ -128,9 +128,27 @@ namespace Geometry.Operaciones.Triangulacion.Trianguladores.Delaunay
 
         private bool _CondicionDelaunay(Triangulo T, Punto3D P)
         {
-            //TODO: Desarrollar condición Delaunay
+            //TODO: determinar cual de las dos operaciones matriciales es más rápida
 
-            return false;
+            T.OrdenarVertices(false);
+
+            Matrices.Matriz MatDelaunay = new Matrices.Matriz(new double[4,4]
+                {
+                    {T.P1.X, T.P1.Y, Math.Pow(T.P1.X, 2.0) + Math.Pow(T.P1.Y, 2.0), 1.0},
+                    {T.P2.X, T.P2.Y, Math.Pow(T.P2.X, 2.0) + Math.Pow(T.P2.Y, 2.0), 1.0},
+                    {T.P3.X, T.P3.Y, Math.Pow(T.P3.X, 2.0) + Math.Pow(T.P3.Y, 2.0), 1.0},
+                    {   P.X,    P.Y, Math.Pow(   P.X, 2.0) + Math.Pow(   P.Y, 2.0), 1.0}
+                });
+
+            /*Matrices.Matriz MatDelaunayCompacta = new Matrices.Matriz(new double[3,3]
+                {
+                    {T.P1.X - P.X, T.P1.Y - P.Y, Math.Pow(T.P1.X - P.X, 2.0) + Math.Pow(T.P1.Y - P.Y, 2.0)},
+                    {T.P2.X - P.X, T.P2.Y - P.Y, Math.Pow(T.P2.X - P.X, 2.0) + Math.Pow(T.P2.Y - P.Y, 2.0)},
+                    {T.P3.X - P.X, T.P3.Y - P.Y, Math.Pow(T.P3.X - P.X, 2.0) + Math.Pow(T.P3.Y - P.Y, 2.0)},
+                });*/
+
+            return MatDelaunay.Determinate > 0.0;
+            //return MatDelaunayCompacta.Determinate > 0.0;
         }
     }
 }
