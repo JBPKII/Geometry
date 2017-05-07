@@ -31,5 +31,106 @@ namespace Geometry.Operaciones.Triangulacion.Trianguladores.Delaunay
             MergeDelaunay MD = new MergeDelaunay(triangulacion1, triangulacion2);
             return MD.DoMerge();
         }
+
+        private IList<Triangulo> _Split(Triangulo T, Punto3D P)
+        {
+            IList<Triangulo> Res = new List<Triangulo>();
+
+            Triangulo res = new Triangulo(T.P1, T.P2, P);
+            res.OrdenarVertices(false);//CCW
+            Res.Add(res);
+
+            res = new Triangulo(T.P2, T.P3, P);
+            res.OrdenarVertices(false);//CCW
+            Res.Add(res);
+
+            res = new Triangulo(T.P3, T.P1, P);
+            res.OrdenarVertices(false);//CCW
+            Res.Add(res);
+
+            return Res;
+        }
+
+        private IList<Triangulo> _Flip(Triangulo T1,Triangulo T2)
+        {
+            IList<Triangulo> Res = new List<Triangulo> { T1, T2 };
+
+            IList<Punto3D> _aristaComun = new List<Punto3D>();
+            Punto3D _puntoSoloT1 = null;
+            Punto3D _puntoSoloT2 = null;
+
+            #region Obtiene la arista común
+            if (T1.P1 == T2.P1 || T1.P1 == T2.P2 || T1.P1 == T2.P3)
+            {
+                _aristaComun.Add(T1.P1);
+            }
+            else
+            {
+                _puntoSoloT1 = T1.P1;
+            }
+
+            if (T1.P2 == T2.P1 || T1.P2 == T2.P2 || T1.P2 == T2.P3)
+            {
+                _aristaComun.Add(T1.P2);
+            }
+            else
+            {
+                _puntoSoloT1 = T1.P2;
+            }
+
+            if (T1.P3 == T2.P1 || T1.P3 == T2.P2 || T1.P3 == T2.P3)
+            {
+                _aristaComun.Add(T1.P1);
+            }
+            else
+            {
+                _puntoSoloT1 = T1.P1;
+            }
+
+            if (!_aristaComun.Contains(T2.P1))
+            {
+                _puntoSoloT2 = T2.P1;
+            }
+            else if (!_aristaComun.Contains(T2.P2))
+            {
+                _puntoSoloT2 = T2.P2;
+            }
+            else
+            {
+                _puntoSoloT2 = T2.P3;
+            }
+            #endregion
+
+            if (_aristaComun.Count == 2 && _puntoSoloT1 != null && _puntoSoloT2 != null)
+            {
+                //Pasa la condición de Delaunay
+                if (!_CondicionDelaunay(T1, _puntoSoloT2))
+                {
+                    Res.Clear();
+
+                    //Hace el Flip
+                    Triangulo temp = new Triangulo(_puntoSoloT1, _puntoSoloT2, _aristaComun[0]);
+                    temp.OrdenarVertices(false);
+                    Res.Add(temp);
+
+                    temp = new Triangulo(_puntoSoloT1, _puntoSoloT2, _aristaComun[1]);
+                    temp.OrdenarVertices(false);
+                    Res.Add(temp);
+                }
+            }
+            else
+            {
+                //No comparten solo una arista
+            }
+
+            return Res;
+        }
+
+        private bool _CondicionDelaunay(Triangulo T, Punto3D P)
+        {
+            //TODO: Desarrollar condición Delaunay
+
+            return false;
+        }
     }
 }

@@ -57,6 +57,13 @@ namespace Geometry.Geometrias
             }
         }
         
+        public void OrdenarVertices(bool SentidoHorario = false)
+        {
+            Triangulo temp = Analisis.AnalisisGeometrico.OrdenarVertices(this, SentidoHorario);
+            this.P1 = temp.P1;
+            this.P2 = temp.P2;
+            this.P3 = temp.P3;
+        }
         /// <summary>
         /// Retorna si el punto indicado está dentro del triángulo
         /// </summary>
