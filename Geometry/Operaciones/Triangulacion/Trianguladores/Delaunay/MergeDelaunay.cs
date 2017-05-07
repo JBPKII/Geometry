@@ -18,8 +18,8 @@ namespace Geometry.Operaciones.Triangulacion.Trianguladores.Delaunay
 
         public IList<Triangulo> DoMerge()
         {
+            //TODO: Desarrollar Merge Delaunay
             IList<Triangulo> ResTriang = new List<Triangulo>();
-
 
 
             return ResTriang;

@@ -231,13 +231,15 @@ namespace Geometry.Operaciones.Triangulacion
                         //condiciones de parada
                         if (_poolProcesos.Count == 0 && _poolResultados.Count == 1)
                         {
+                            _logProcesoMain.Add(new Log.EventoLog(Log.TypeEvento.Fin, "Finalización de la Triangulación Multiproceso."));
                             _estadoProceso = Estado.Terminado;
-                            //TODO: Transmitir errores o proceso mediante un log en el resultado o similar
                         }
                     }
                     else
                     {
+                        _logProcesoMain.Add(new Log.EventoLog(Log.TypeEvento.Fin, "Finalización de la Triangulación Multiproceso con errores."));
                         _estadoProceso = Estado.ConErrores;
+
                     }
                 }
             }
@@ -263,7 +265,7 @@ namespace Geometry.Operaciones.Triangulacion
                     for (Indice2 = 0; Indice2 < _poolResultados.Count; Indice2++)
                     {
                         if (Indice1 != Indice2 && 
-                            _poolResultados[Indice1].Seccion.MallaAnteriorSiguiente.EsConsecutiva(_poolResultados[Indice2].Seccion.MallaAnteriorSiguiente))
+                            _poolResultados[Indice1].Seccion.ParAristas.EsConsecutiva(_poolResultados[Indice2].Seccion.ParAristas))
                         {
                             //Encuentra las posibles mallas consecutivas
                             ProcesoMerge = new SubProcesoMerge(_tipoTriangulado, _poolResultados[Indice1], _poolResultados[Indice2]);
@@ -333,8 +335,12 @@ namespace Geometry.Operaciones.Triangulacion
             _poolProcesos = new List<ISubProceso>();
 
             //Secciones
-            IList<SeccionTriangulacion> secciones = _CalcularSecciones(_perimetro, _procesosDedicados);
-            if(secciones.Count==0)
+            IList<SeccionTriangulacion> secciones;
+            if (_perimetro.Vertices.Count > 0)
+            {
+                secciones = _CalcularSecciones(_perimetro.Vertices, _procesosDedicados);
+            }
+            else
             {
                 secciones = _CalcularSecciones(_puntos3D, _procesosDedicados);
             }
@@ -345,31 +351,38 @@ namespace Geometry.Operaciones.Triangulacion
                                                               _ContenidoEnSeccion(item.TrianguloSeccion, _puntos3D),
                                                               _ContenidoEnSeccion(item.TrianguloSeccion, _lineasRuptura),
                                                               item.TrianguloSeccion,
-                                                              item.MallaAnteriorSiguiente.MallaAnterior,
-                                                              item.MallaAnteriorSiguiente.MallaSiguiente));
+                                                              item.ParAristas.Anterior,
+                                                              item.ParAristas.Siguiente));
             }
 
             _logProcesoMain.Add(new Log.EventoLog(Log.TypeEvento.Fin, "Repartir datos en cada sector."));
         }
 
-        private List<SeccionTriangulacion> _CalcularSecciones(Poligono Perimetro, int NumeroSecciones)
+        /// <summary>
+        /// numera a partir de 1 las aristas de cada sector
+        ///
+        /// </summary>
+        /// <param name="Puntos"></param>
+        /// <param name="NumeroSecciones"></param>
+        /// <returns></returns>
+        private List<SeccionTriangulacion> _CalcularSecciones(IList<Punto3D> Puntos, int NumeroSecciones)
         {
             List<SeccionTriangulacion> resSecciones = new List<SeccionTriangulacion>();
 
             try
             {
-                //Calcula las secciones que envuelven al polígono
-                if (Perimetro.Vertices.Count > 0)
+                if (Puntos.Count != 0)
                 {
-                    BBox BBoxPoligono = new BBox();
-                    foreach (Punto3D P3D in Perimetro.Vertices)
+                    //calcula el cierre convexo
+                    BBox BB = new BBox();
+                    foreach (Punto3D itemP3D in Puntos)
                     {
-                        BBoxPoligono.Añadir(P3D);
+                        BB.Añadir(itemP3D);
                     }
 
-                    double RadioCircinscrito = Math.Sqrt(Math.Pow(BBoxPoligono.Ancho, 2.0) + Math.Pow(BBoxPoligono.Alto, 2.0)) / 2.0;
-                    Punto3D PMedio = new Punto3D((BBoxPoligono.Maximo.X + BBoxPoligono.Minimo.X) / 2.0,
-                                                 (BBoxPoligono.Maximo.Y + BBoxPoligono.Minimo.Y) / 2.0,
+                    double RadioCircinscrito = Math.Sqrt(Math.Pow(BB.Ancho, 2.0) + Math.Pow(BB.Alto, 2.0)) / 2.0;
+                    Punto3D PMedio = new Punto3D((BB.Maximo.X + BB.Minimo.X) / 2.0,
+                                                 (BB.Maximo.Y + BB.Minimo.Y) / 2.0,
                                                  0.0);
                     Punto3D PAnterior = new Punto3D(PMedio.X + RadioCircinscrito, PMedio.Y, 0.0);
                     for (int i = 1; i <= NumeroSecciones; i++)
@@ -391,45 +404,12 @@ namespace Geometry.Operaciones.Triangulacion
                         {
                             TrianguloSeccion = Seccion
                         };
-                        ResSubSec.MallaAnteriorSiguiente.MallaAnterior = i;
-                        ResSubSec.MallaAnteriorSiguiente.MallaSiguiente = (i + 1) > NumeroSecciones ? 1 : (i + 1);//Revisar
+                        ResSubSec.ParAristas.Anterior = i;
+                        ResSubSec.ParAristas.Siguiente = (i + 1) > NumeroSecciones ? 1 : (i + 1);//Revisar
                         resSecciones.Add(ResSubSec);
                     }
 
                     _logProcesoMain.Add(new Log.EventoLog(Log.TypeEvento.Informacion, "Generados " + resSecciones.Count + " sectores."));
-                }
-                else
-                {
-                    _logProcesoMain.Add(new Log.EventoLog(Log.TypeEvento.Informacion, "No se han encontrado vértices en el perímetro."));
-                    resSecciones = new List<SeccionTriangulacion>();
-                }
-            }
-            catch (Exception sysEx)
-            {
-                _logProcesoMain.Add(new Log.EventoLog(Log.TypeEvento.Error, sysEx.ToString()));
-                sysEx.Data.Clear();
-                resSecciones = new List<SeccionTriangulacion>();
-            }
-
-            return resSecciones;
-        }
-
-        private List<SeccionTriangulacion> _CalcularSecciones(IList<Punto3D> Puntos, int NumeroSecciones)
-        {
-            List<SeccionTriangulacion> resSecciones = new List<SeccionTriangulacion>();
-
-            try
-            {
-                if (Puntos.Count != 0)
-                {
-                    //calcula el cierre convexo
-                    BBox BB = new BBox();
-                    foreach (Punto3D itemP3D in Puntos)
-                    {
-                        BB.Añadir(itemP3D);
-                    }
-                    Poligono cierreConvexo = BB.ToPoligono();
-                    resSecciones = _CalcularSecciones(cierreConvexo, NumeroSecciones);
                 }
                 else
                 {

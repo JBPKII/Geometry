@@ -40,22 +40,22 @@ namespace Geometry.Operaciones.Triangulacion
 
     public class IndicesSeccionTriangulacion
     {
-        public int MallaAnterior = -1;
-        public int MallaSiguiente = -1;
+        public int Anterior = -1;
+        public int Siguiente = -1;
 
         public bool EsConsecutiva (IndicesSeccionTriangulacion SeccionTest)
         {
             bool Res = false;
 
-            if(MallaAnterior != -1 && MallaSiguiente != -1 &&
-                SeccionTest.MallaAnterior != -1 && SeccionTest.MallaSiguiente != -1)
+            if(Anterior != -1 && Siguiente != -1 &&
+                SeccionTest.Anterior != -1 && SeccionTest.Siguiente != -1)
             {
-                if (this.MallaAnterior == SeccionTest.MallaSiguiente)
+                if (this.Anterior == SeccionTest.Siguiente)
                 {
                     // 1,2 - 0,1
                     Res = true;
                 }
-                else if (this.MallaSiguiente == SeccionTest.MallaAnterior)
+                else if (this.Siguiente == SeccionTest.Anterior)
                 {
                     // 0,1 - 1,2
                     Res = true;
@@ -73,7 +73,7 @@ namespace Geometry.Operaciones.Triangulacion
     public class SeccionTriangulacion
     {
         public Triangulo TrianguloSeccion = new Triangulo();
-        public IndicesSeccionTriangulacion MallaAnteriorSiguiente = new IndicesSeccionTriangulacion();
+        public IndicesSeccionTriangulacion ParAristas = new IndicesSeccionTriangulacion();
     }
 
     /// <summary>
@@ -89,6 +89,15 @@ namespace Geometry.Operaciones.Triangulacion
         public Triangulacion()
         {
 
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        private Log.Log _logTriangulacion = new Log.Log();
+        public Log.Log LogTriangulacion
+        {
+            get { return _logTriangulacion; }
         }
 
         /// <summary>
@@ -154,12 +163,13 @@ namespace Geometry.Operaciones.Triangulacion
             if (TrianguladorMultiProceso.EstadoProceso == TriangulacionMultiProceso.Estado.Terminado)
             {
                 _Resultado = TrianguladorMultiProceso.Resultado.Resultado;
+                _logTriangulacion = TrianguladorMultiProceso.LogMultiProceso;
                 return true;
             }
             else
             {
-                //TODO: Informar de cada uno de los errores que an detenido cada uno de los procesos
-                //TrianguladorMultiProceso.LogMultiProceso
+                //Informar de cada uno de los errores que an detenido cada uno de los procesos
+                _logTriangulacion = TrianguladorMultiProceso.LogMultiProceso;
                 return false;
             }
         }

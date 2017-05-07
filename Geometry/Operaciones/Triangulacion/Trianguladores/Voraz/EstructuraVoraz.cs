@@ -7,13 +7,13 @@ namespace Geometry.Operaciones.Triangulacion.Trianguladores.Voraz
 {
     public class IndicesSeccionVoraz
     {
-        public int MallaAnterior = -1;
-        public int MallaSiguiente = -1;
+        public int Anterior = -1;
+        public int Siguiente = -1;
     }
     public class SeccionVoraz
     {
         public Triangulo Seccion = new Triangulo();
-        public IndicesSeccionVoraz MallaAnteriorSiguiente = new IndicesSeccionVoraz();
+        public IndicesSeccionVoraz ParAristas = new IndicesSeccionVoraz();
     }
     public class ResultadoVoraz : IResultadoTriangulacion
     {

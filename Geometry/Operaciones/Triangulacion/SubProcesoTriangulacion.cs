@@ -55,7 +55,7 @@ namespace Geometry.Operaciones.Triangulacion
 
 
         public SubProcesoTriangulacion(TipoTriangulado tipoTriangulado, List<Punto3D> Vertices, List<Linea> Rupturas, Triangulo Envolvente,
-            int MallaAnterior,int MallaSiguiente)
+            int Anterior,int Siguiente)
         {
             _logProceso.Add(new Log.EventoLog(Log.TypeEvento.Inicio, "Inicialización del Proceso."));
 
@@ -66,8 +66,8 @@ namespace Geometry.Operaciones.Triangulacion
             //Añade a la triangulación los índices de la malla anterior y la siguiente
             _ResTriangulacion = Triangulacion.GetNewResultadoTriangulacion(tipoTriangulado);
             _ResTriangulacion.Seccion.TrianguloSeccion = Envolvente;
-            _ResTriangulacion.Seccion.MallaAnteriorSiguiente.MallaAnterior = MallaAnterior;
-            _ResTriangulacion.Seccion.MallaAnteriorSiguiente.MallaSiguiente = MallaSiguiente;
+            _ResTriangulacion.Seccion.ParAristas.Anterior = Anterior;
+            _ResTriangulacion.Seccion.ParAristas.Siguiente = Siguiente;
 
             _logProceso.Add(new Log.EventoLog(Log.TypeEvento.Fin, "Inicialización del Proceso."));
 

@@ -7,13 +7,13 @@ namespace Geometry.Operaciones.Triangulacion.Trianguladores.MinimoPeso
 {
     public class IndicesSeccionMinimoPeso
     {
-        public int MallaAnterior = -1;
-        public int MallaSiguiente = -1;
+        public int Anterior = -1;
+        public int Siguiente = -1;
     }
     public class SeccionMinimoPeso
     {
         public Triangulo Seccion = new Triangulo();
-        public IndicesSeccionMinimoPeso MallaAnteriorSiguiente = new IndicesSeccionMinimoPeso();
+        public IndicesSeccionMinimoPeso ParAristas = new IndicesSeccionMinimoPeso();
     }
     public class ResultadoMinimoPeso : IResultadoTriangulacion
     {

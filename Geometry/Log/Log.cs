@@ -6,18 +6,18 @@ using System.Threading.Tasks;
 
 namespace Geometry.Log
 {
-    class Log
+    public class Log
     {
         public IList<ProcessLog> LogProcesos = new List<ProcessLog>();
     }
 
-    enum TypeProceso
+    public enum TypeProceso
     {
         Multiproceso,
         Triangulacion,
         Merge
     }
-    class ProcessLog
+    public class ProcessLog
     {
         private string _idLog = "";
         public string IDLog
@@ -75,7 +75,7 @@ namespace Geometry.Log
         }
     }
 
-    enum TypeEvento
+    public enum TypeEvento
     {
         Inicio,
         Fin,
@@ -83,7 +83,7 @@ namespace Geometry.Log
         Advertencia,
         Error
     }
-    class EventoLog
+    public class EventoLog
     {
         private TypeEvento _tipoEvento = TypeEvento.Inicio;
         public TypeEvento TipoEvento

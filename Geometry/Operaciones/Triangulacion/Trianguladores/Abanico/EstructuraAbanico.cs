@@ -7,13 +7,13 @@ namespace Geometry.Operaciones.Triangulacion.Trianguladores.Abanico
 {
     public class IndicesSeccionAbanico
     {
-        public int MallaAnterior = -1;
-        public int MallaSiguiente = -1;
+        public int Anterior = -1;
+        public int Siguiente = -1;
     }
     public class SeccionAbanico
     {
         public Triangulo Seccion = new Triangulo();
-        public IndicesSeccionAbanico MallaAnteriorSiguiente = new IndicesSeccionAbanico();
+        public IndicesSeccionAbanico ParAristas = new IndicesSeccionAbanico();
     }
     public class ResultadoAbanico : IResultadoTriangulacion
     {

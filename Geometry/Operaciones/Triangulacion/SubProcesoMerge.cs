@@ -63,23 +63,23 @@ namespace Geometry.Operaciones.Triangulacion
             _triangulacion2 = Triang2.Resultado;
 
             _ResTriangulacion = Triangulacion.GetNewResultadoTriangulacion(tipoTriangulado);
-            if (Triang1.Seccion.MallaAnteriorSiguiente.MallaAnterior == Triang2.Seccion.MallaAnteriorSiguiente.MallaSiguiente)
+            if (Triang1.Seccion.ParAristas.Anterior == Triang2.Seccion.ParAristas.Siguiente)
             {
                 // 1,2 - 0,1
-                _ResTriangulacion.Seccion.MallaAnteriorSiguiente.MallaAnterior = 
-                    Triang1.Seccion.MallaAnteriorSiguiente.MallaSiguiente;
-                _ResTriangulacion.Seccion.MallaAnteriorSiguiente.MallaSiguiente =
-                    Triang2.Seccion.MallaAnteriorSiguiente.MallaAnterior;
+                _ResTriangulacion.Seccion.ParAristas.Anterior = 
+                    Triang1.Seccion.ParAristas.Siguiente;
+                _ResTriangulacion.Seccion.ParAristas.Siguiente =
+                    Triang2.Seccion.ParAristas.Anterior;
             }
             else
             {
-                if (Triang1.Seccion.MallaAnteriorSiguiente.MallaSiguiente == Triang2.Seccion.MallaAnteriorSiguiente.MallaAnterior)
+                if (Triang1.Seccion.ParAristas.Siguiente == Triang2.Seccion.ParAristas.Anterior)
                 {
                     // 0,1 - 1,2
-                    _ResTriangulacion.Seccion.MallaAnteriorSiguiente.MallaAnterior =
-                        Triang1.Seccion.MallaAnteriorSiguiente.MallaAnterior;
-                    _ResTriangulacion.Seccion.MallaAnteriorSiguiente.MallaSiguiente =
-                        Triang2.Seccion.MallaAnteriorSiguiente.MallaSiguiente;
+                    _ResTriangulacion.Seccion.ParAristas.Anterior =
+                        Triang1.Seccion.ParAristas.Anterior;
+                    _ResTriangulacion.Seccion.ParAristas.Siguiente =
+                        Triang2.Seccion.ParAristas.Siguiente;
                 }
                 else
                 {

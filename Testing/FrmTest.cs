@@ -205,10 +205,12 @@ namespace Testing
             IList<Triangulo> Res = new List<Triangulo>();
 
             Geometry.Operaciones.Triangulacion.Triangulacion DelaTriang = new Geometry.Operaciones.Triangulacion.Triangulacion();
+            Geometry.Log.Log DelaLog = new Geometry.Log.Log();
 
             if(DelaTriang.TriangularMalla(new Poligono(), new List<Linea>(), lstPuntos3d, TipoTriangulado.Delaunay))
             {
-                IList<Triangulo> Res = DelaTriang.Resultado;
+                Res = DelaTriang.Resultado;
+                DelaLog = DelaTriang.LogTriangulacion;
             }
             else
             {

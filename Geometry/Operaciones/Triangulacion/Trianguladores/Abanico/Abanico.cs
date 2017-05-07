@@ -21,7 +21,7 @@ namespace Geometry.Operaciones.Triangulacion.Trianguladores.Abanico
 
         public IList<Triangulo> Merge(IList<Triangulo> triangulacion1, IList<Triangulo> triangulacion2)
         {
-            //TODO: Desarrollar Merge
+            //TODO: Desarrollar Merge Abanico
             IList<Triangulo> ResTriang = new List<Triangulo>();
 
 

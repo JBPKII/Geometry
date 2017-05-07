@@ -19,7 +19,7 @@ namespace Geometry.Operaciones.Triangulacion.Trianguladores.Voraz
 
         public IList<Triangulo> Merge(IList<Triangulo> triangulacion1, IList<Triangulo> triangulacion2)
         {
-            //TODO: Desarrollar Merge
+            //TODO: Desarrollar Merge Voraz
             IList<Triangulo> ResTriang = new List<Triangulo>();
 
 

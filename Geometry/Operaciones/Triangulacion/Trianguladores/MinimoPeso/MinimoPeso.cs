@@ -22,7 +22,7 @@ namespace Geometry.Operaciones.Triangulacion.Trianguladores.MinimoPeso
 
         public IList<Triangulo> Merge(IList<Triangulo> triangulacion1, IList<Triangulo> triangulacion2)
         {
-            //TODO: Desarrollar Merge
+            //TODO: Desarrollar Merge MinimoPeso
             IList<Triangulo> ResTriang = new List<Triangulo>();
 
 
